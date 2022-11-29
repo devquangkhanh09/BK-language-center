@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <% if (hasMessages) { %>
+		<% messages.forEach(function(message) { %>
+			<p style="color: red;"><%= message %></p>
+		<% }); %>
+	<% } %>
+    <form action=<%= action %> method="post">
+      <input type="text" name="username">
+      <input type="password" name="password">
+      <input type="submit" value="Sign In">
+    </form>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "pip-221",
+  "version": "1.0.0",
+  "description": "Project for PIP 221",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "start:dev": "node ./node_modules/nodemon/bin/nodemon.js"
+  },
+  "dependencies": {
+    "connect-ensure-login": "^0.1.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.0.3",
+    "ejs": "~3.1.8",
+    "express": "~4.16.1",
+    "express-session": "^1.17.3",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

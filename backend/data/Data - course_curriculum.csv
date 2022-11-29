@@ -1,0 +1,31 @@
+course_id,lecture,description
+FD-01,1,Noun
+FD-01,2,Verd
+FD-01,3,Adjentive
+FD-01,4,Adverb
+FD-01,5,Sentences
+FD-01,6,Linking verb
+FD-01,7,Greeting
+FD-01,8,Tag question
+FD-01,9,Conjunction
+FD-01,10,WH-question
+FD-02,1,Present simple
+FD-02,2,Present continous
+FD-02,3,Present perfect
+FD-02,4,Past simple
+FD-02,5,Past continous
+FD-02,6,Past perfect
+FD-02,7,Future simple
+FD-02,8,Future continous
+FD-02,9,Future perfect
+FD-02,10,WH-question
+JR-01,1,Tense
+JR-01,2,Idiom
+JR-01,3,Phrasel verb
+JR-01,4,Tag question
+JR-01,5,Paragraph
+JR-01,6,Speaking about hobby
+JR-01,7,Reading sample article
+JR-01,8,Speaking with foreign
+JR-01,9,Test SP-WR
+JR-01,10,Test LC-RC

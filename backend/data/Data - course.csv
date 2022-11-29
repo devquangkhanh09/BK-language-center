@@ -1,0 +1,6 @@
+course_id,name,type,requirement,target,cost,numOfLecture
+FD-01,IELTS Foundation 1,OVERALL,0,3,5000000,10
+FD-02,IELTS Foundation 2,OVERALL,3,4,5000000,10
+JR-01,IELTS Junior,OVERALL,4,5,7500000,10
+SR-01,IELTS Senior,OVERALL,6,7,10000000,10
+LS-01,IELTS Listening 1,LISTENING,0,3,2500000,10
