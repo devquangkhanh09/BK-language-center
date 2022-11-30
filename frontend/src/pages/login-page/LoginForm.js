@@ -16,6 +16,7 @@ import {
 import Iconify from "../../components/iconify";
 
 import Logo from "../../assets/logo.png";
+import axios from "axios";
 
 const initialFValues = {
   username: "",
@@ -57,10 +58,18 @@ export default function LoginForm() {
     setErrors({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateNotEmpty()) {
-      navigate("/admin/courses", { replace: true });
+      const result = await axios.post('/api/signin-admin', values);
+      if (result.status === 200) {
+        localStorage.setItem("isAuthenticated", true);
+        localStorage.setItem("role", result.data.role);
+        navigate("/admin/courses", { replace: true });
+      }
+      else setErrors({signin: "Sai tên đăng nhập hoặc mật khẩu"});
+
+      // TO-DO: handle signin fail
       resetForm();
     }
   };

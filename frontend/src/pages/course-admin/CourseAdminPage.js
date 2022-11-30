@@ -57,11 +57,11 @@ export default function CourseAdminPage() {
     axios
       .get("/api/admin/courses")
       .then((res) => {
-        var myList = res.data.myList;
-        console.log(myList);
+        var myList = res.data.courses;
         setCourseList(myList);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => navigate('/', {replace: true}));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //--------------------------------------
@@ -77,9 +77,9 @@ export default function CourseAdminPage() {
   };
   //--------------------------------------
   const [openConfirm, setOpenConfirm] = useState(false);
-  const handleOpenConfirm = () => {
-    setOpenConfirm(true);
-  };
+  // const handleOpenConfirm = () => {
+  //   setOpenConfirm(true);
+  // };
   //--------------------------------------
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - courseList.length) : 0;

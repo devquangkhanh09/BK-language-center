@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // @mui
@@ -25,8 +26,17 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
-    navigate("/", { replace: true });
   };
+
+  const handleSignOut = () => {
+    axios.post('/api/signout')
+      .then(() => {
+        localStorage.setItem("isAuthenticated", false);
+        localStorage.setItem("role", "");
+        navigate("/", { replace: true });
+      })
+      .catch(err => console.log(err))
+  }
   
   const iconBackColorOpen = (theme) => theme.palette.grey[300];
 
@@ -87,7 +97,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: "dashed" }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleSignOut} sx={{ m: 1 }}>
           Đăng xuất
         </MenuItem>
       </Popover>

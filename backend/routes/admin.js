@@ -1,14 +1,21 @@
 const { query } = require('express');
 var express = require('express');
 var router = express.Router();
-var ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
+// var ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
 var {authorize} = require('../auth/auth');
 
 // var ensureLoggedIn = ensureLogIn('/signin-admin');
 var dbconnect = require('../db').connection;
 
-// router.use(ensureLoggedIn);
-// router.use(authorize('ADMIN'));
+const ensureLoggedIn = (req, res, next) => {
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).send("Unauthorized");
+    }
+    next();
+}
+
+router.use(ensureLoggedIn);
+router.use(authorize('ADMIN'));
 
 // TO-DO: query from MySQL and render dashboard page
 async function getStatistics(field){
@@ -20,6 +27,20 @@ async function getStatistics(field){
             }
             else {
                 resolve(parseInt(result[0].COUNT));
+            }
+        })
+    })
+}
+
+async function get_all_courses(){
+    return new Promise((resolve, reject) => {
+        course_query = "SELECT * FROM course";
+        dbconnect.query(course_query, (err, result, fields) =>{
+            if (err) {
+                reject(err);
+            }
+            else{
+                resolve(result);
             }
         })
     })
@@ -105,9 +126,9 @@ router.get('/courses', async (req, res) => {
     //-----COURSE INFO ------------------
     //course_query = "SELECT * FROM course";
 
-    //----CLASS INFO ---------------------
-    var all_class = await get_all_class();  
-    dashboard_data.class = all_class;
+    //----CLASS INFO ---------------------  
+    dashboard_data.class = await get_all_class();
+    dashboard_data.courses = await get_all_courses();
     res.json(dashboard_data);
 })
 

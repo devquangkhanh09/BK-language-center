@@ -45,10 +45,12 @@ router.get('/signin-student', (req, res) => {
 });
 
 router.post('/signin-admin', passport.authenticate('local-admin', {
-    successReturnToOrRedirect: '/admin/dashboard',
-    failureRedirect: '/signin-admin',
     failureMessage: true
-}));
+}), (req, res) => {
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).send("Unauthorized");
+    } else return res.status(200).send(req.user);
+});
 
 router.post('/signin-teacher', passport.authenticate('local-teacher', {
     successReturnToOrRedirect: '/teacher',
@@ -65,7 +67,7 @@ router.post('/signin-student', passport.authenticate('local-student', {
 router.post('/signout', function(req, res, next) {
     req.logout(function(err) {
         if (err) { return next(err); }
-        res.redirect('/');
+        res.status(200).send("Sign out successfully");
     });
 });
 

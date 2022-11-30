@@ -12,13 +12,26 @@ import TeacherAdminPage from "./pages/teacher-admin";
 import StudentAdminPage from "./pages/student-admin";
 import HandleClassRegisterPage from "./pages/handle-register";
 
+const ProtectedRoute = ({ role, children }) => {
+  
+  if (!localStorage.getItem("isAuthenticated") || localStorage.getItem("role") !== role) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
     {
       path: "/admin",
-      element: <AppLayout />,
+      element: (
+        <ProtectedRoute role="ADMIN">
+          <AppLayout />
+        </ProtectedRoute>
+      ),
       children: [
         { element: <Navigate to="/courses" />, index: true },
         {
