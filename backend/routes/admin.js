@@ -80,14 +80,14 @@ router.post("/course-create", async (req, res) =>{
     var course_id = req.body.id;
     dbconnect.query(course_sql, [req.body.id, req.body.name, req.body.type, req.body.requirement, req.body.target, req.body.cost, req.body.numOfLecture], (err,result) => {
         if (err) {
-            console.log(err);
+            res.status(400);
         }
     });
     var cur = req.body.curriculum;
     cur.forEach(element => {
         dbconnect.query(cur_sql, [course_id, element.lecture, element.description], (err,result) => {
             if (err) {
-                console.log(err);
+                res.status(400);
             }
         })
     });

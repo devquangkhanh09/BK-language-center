@@ -15,4 +15,27 @@ PUT /api/admin/handle-register:
         status: 200 / 400
         body:
             message
+
+POST /api/admin/course-create
+    req:
+        body:
+            id 
+            name 
+            type 
+            requirement 
+            target 
+            cost
+            numOfLecture
+            curriculum:
+                lecture 
+                description
+    res:
+        stautus: 200/400
+        body: message
         
+GET /api/admin/class:
+    req:
+        query:
+            course_id
+    res:
+        [class]
