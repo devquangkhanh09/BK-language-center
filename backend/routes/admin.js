@@ -19,9 +19,9 @@ router.use(authorize('ADMIN'));
 
 // TO-DO: query from MySQL and render dashboard page
 async function getStatistics(field){
-    var query = "SELECT COUNT(*) AS COUNT FROM " + field;
+    var query = "SELECT COUNT(*) AS COUNT FROM ??";
     return new Promise((resolve, reject) => {
-        dbconnect.query(query, (err, result, fields) =>{
+        dbconnect.query(query, [field], (err, result, fields) =>{
             if (err){
                 reject(err);
             }
@@ -168,12 +168,23 @@ router.get('/class', async (req, res) =>{
 })
 
 router.post("/course-create", async (req, res) =>{
-    var sql = "INSERT INTO course (course_id,name,type,requirement,target,cost,numOfLecture) VALUES (?,?,?,?,?,?,?)";
-    dbconnect.query(sql, [req.query.id, req.body.name, req.body.type, req.query.requirement, req.query.target, req.query.cost, 10], (err,result) => {
+    var course_sql = "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (??,??,??,??,??,??,??)";
+    var cur_sql = "INSERT INTO `course_curriculum` (`course_id`,`lecture`,`description`) VALUES (??,??,??)";
+    var course_id = req.body.id;
+    dbconnect.query(course_sql, [req.body.id, req.body.name, req.body.type, req.body.requirement, req.body.target, req.body.cost, req.body.numOfLecture], (err,result) => {
         if (err) {
             console.log(err);
         }
     });
+    var cur = req.body.curriculum;
+    cur.forEach(element => {
+        dbconnect.query(cur_sql, [course_id, element.lecture, element.description], (err,result) => {
+            if (err) {
+                console.log(err);
+            }
+        })
+    });
+    res.send("Course added successfully");
 })
 
 module.exports = router;
