@@ -59,6 +59,14 @@ router.get('/handle-register', async (req, res) =>{
     res.json({registers: unpaid_register});    
 })
 
+router.put('/handle-register', async (req, res) => {
+    const query = 'CALL update_status(?, ?, ?, ?)';
+    dbconnect.query(query, [req.body.course_id, req.body.class_id, req.body.student_id, req.body.status], (err) => {
+        if (err) res.status(400).json({message: err.message});
+        else res.status(200).json({message: 'Cập nhật trạng thái thanh toán cho yêu cầu đăng ký thành công'});
+    })
+})
+
 router.get('/class', async (req, res) =>{
     var data;
     if (req.query.course_id === "") data = await get_all_class();
