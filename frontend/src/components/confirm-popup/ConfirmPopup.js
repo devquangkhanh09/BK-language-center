@@ -24,6 +24,8 @@ export default function ConfirmPopup({
   open,
   setOpen,
   content,
+  confirmParams,
+  confirmAction
 }) {
   return (
     <StyledDialog open={open}>
@@ -65,7 +67,7 @@ export default function ConfirmPopup({
               gap: "18px",
             }}
           >
-            <Button variant="outlined" onClick={() => setOpen(false)}>
+            <Button variant="outlined" onClick={() => confirmAction(confirmParams)}>
               Xác nhận
             </Button>
             <Button

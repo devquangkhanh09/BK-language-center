@@ -19,6 +19,7 @@ import {
 // components
 import Scrollbar from "../../components/scrollbar";
 import ConfirmPopup from "../../components/confirm-popup";
+import Popup from "../../components/popup/Popup";
 import ListHead from "../../components/list-head";
 
 const TABLE_HEAD = [
@@ -60,9 +61,41 @@ export default function HandleClassRegisterPage() {
   };
   //--------------------------------------
   const [openConfirm, setOpenConfirm] = useState(false);
-  // const handleOpenConfirm = () => {
-  //   setOpenConfirm(true);
-  // };
+  const [confirmParams, setConfirmParams] = useState({});
+  const [openPopup, setOpenPopup] = useState(false);
+  const [contentPopup, setContentPopup] = useState({title: '', message: ''});
+
+  const handleOpenConfirm = (course_id, class_id, student_id) => {
+    setConfirmParams({
+      course_id,
+      class_id,
+      student_id
+    });
+    setOpenConfirm(true);
+  };
+
+  const confirmAction = ({course_id, class_id, student_id}) => {
+    axios
+      .put("/api/admin/handle-register", {
+        course_id,
+        class_id,
+        student_id,
+        status: "paid"
+      })
+      .then((res) => {
+        setOpenConfirm(false);
+        setRegisterList(registerList.filter(register => {
+          return register.course_id !== course_id || register.class_id !== class_id || register.student_id !== student_id
+        }));
+        setContentPopup({title: "THÀNH CÔNG", message: res.data.message});
+        setOpenPopup(true);
+      })
+      .catch((error) => {
+        setOpenConfirm(false);
+        setContentPopup({title: "THẤT BẠI", message: error.message});
+        setOpenPopup(true);
+      });
+  }
   //--------------------------------------
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - registerList.length) : 0;
@@ -124,7 +157,7 @@ export default function HandleClassRegisterPage() {
                             <Button
                               variant="outlined"
                               sx={{ fontSize: "13px", borderRadius: 30 }}
-                              onClick={() => setOpenConfirm(true)}
+                              onClick={() => handleOpenConfirm(course_id, class_id, student_id)}
                             >
                               Xác nhận thanh toán
                             </Button>
@@ -157,6 +190,14 @@ export default function HandleClassRegisterPage() {
         open={openConfirm}
         setOpen={setOpenConfirm}
         content="Bạn có chắc chắn muốn xác nhận thanh toán cho yêu cầu đăng ký này?"
+        confirmParams={confirmParams}
+        confirmAction={confirmAction}
+      />
+      <Popup 
+        title={contentPopup.title}
+        children={contentPopup.message}
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
       />
     </>
   );
