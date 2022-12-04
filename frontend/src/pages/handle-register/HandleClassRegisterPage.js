@@ -15,6 +15,7 @@ import {
   TableRow,
   TableCell,
   TablePagination,
+  TextField
 } from "@mui/material";
 // components
 import Scrollbar from "../../components/scrollbar";
@@ -96,6 +97,11 @@ export default function HandleClassRegisterPage() {
         setOpenPopup(true);
       });
   }
+
+  const [textSearch, setTextSearch] = useState('');
+  const handleSearchChange = (e) => {
+    setTextSearch(e.target.value.toLowerCase());
+  }
   //--------------------------------------
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - registerList.length) : 0;
@@ -113,7 +119,14 @@ export default function HandleClassRegisterPage() {
           <Typography variant="h4" gutterBottom>
             Danh sách đăng ký lớp học
           </Typography>
-          
+
+          <TextField 
+            id="outlined-search" 
+            label="Tìm kiếm" 
+            type="search" 
+            helperText="Tìm kiếm đăng ký theo tên học viên"
+            onChange={handleSearchChange}
+          />
         </Stack>
 
         <Card>
@@ -123,6 +136,7 @@ export default function HandleClassRegisterPage() {
                 <ListHead headLabel={TABLE_HEAD} />
                 <TableBody>
                   {registerList
+                    .filter(register => register.student_name.toLowerCase().includes(textSearch))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((register, idx) => {
                       const {
@@ -178,7 +192,7 @@ export default function HandleClassRegisterPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={registerList.length}
+            count={registerList.filter(register => register.student_name.toLowerCase().includes(textSearch)).length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
