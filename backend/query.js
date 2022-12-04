@@ -101,3 +101,17 @@ exports.searchClassbyCourse = async function(course_name) {
         })
     })
 }
+
+exports.studentInClass = async function(course_name, class_name) {
+    return new Promise((resolve, reject) => {
+        var class_query = 'SELECT * FROM class WHERE course_name = ?? and class_name = ??';
+        dbconnect.query(class_query, [course_name, class_name], (err, result, fields) =>{
+            if (err){
+                reject(err);
+            }
+            else {
+                resolve(result);
+            }
+        })
+    })
+}

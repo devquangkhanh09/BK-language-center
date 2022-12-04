@@ -9,7 +9,8 @@ var {
     get_all_student,
     get_all_teacher,
     get_unpaid,
-    searchClassbyCourse
+    searchClassbyCourse,
+    studentInClass
 } = require('../query');
 
 const ensureLoggedIn = (req, res, next) => {
@@ -92,6 +93,41 @@ router.post("/course-create", async (req, res) =>{
         })
     });
     res.send("Course added successfully");
+})
+
+router.post("/class-create", async (req, res) =>{
+    var course_sql = "INSERT INTO `class` (`course_id`,`class_id`,`start_date`,`end_date`,`form`,`branch_id`,`room`,`time`,`teacher_id`,`status`,`numOfStudent`) VALUES (??,??,??,??,??,??,??,??,??)";
+    dbconnect.query(course_sql, [req.body.course_id, req.body.class_id, req.body.start_date, req.body.end_date, req.body.form, req.body.branch_id, req.body.room, req.body.time, req.body.teacher_id,"future", 0], (err,result) => {
+        if (err) {
+            res.status(400);
+        }
+    });
+    res.send("Course added successfully");
+})
+
+router.get("/studentClass", async (req, res) => {
+    var student = await studentInClass(req.query.course_id, req.query.class_id);
+    res.json(student);
+})
+
+router.get("/class-delete", async (req, res) =>{
+    var class_sql = "CALL delete_class(??, ??)";
+    dbconnect.query(class_sql, [req.body.course_id, req.body.class_id], (err,result) => {
+        if (err) {
+            res.status(400);
+        }
+    });
+    res.send("Class deleted successfully");
+})
+
+router.get("/course-delete", async (req, res) =>{
+    var course_sql = "CALL delete_course(??)";
+    dbconnect.query(course_sql, [req.body.course_id], (err,result) => {
+        if (err) {
+            res.status(400);
+        }
+    });
+    res.send("Course deleted successfully");
 })
 
 module.exports = router;

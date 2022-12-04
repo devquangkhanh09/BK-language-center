@@ -362,6 +362,27 @@ END $$
 
 DELIMITER ;
 
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `delete_class` $$
+CREATE PROCEDURE `delete_class` ( _course_id CHAR(9), _class_id CHAR(9)) 
+BEGIN
+    DELETE FROM `student_class` WHERE course_id = _course_id and class_id = _class_id;
+	DELETE FROM `class` WHERE course_id = _course_id and class_id = _class_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `delete_course` $$
+CREATE PROCEDURE `delete_course` ( _course_id CHAR(9)) 
+BEGIN
+    DELETE FROM `student_course` WHERE course_id = _course_id;
+	DELETE FROM `class` WHERE course_id = _course_id;
+	DELETE FROM `course` WHERE course_id = _course_id;
+END $$
+
+DELIMITER ;
+
 
 
 

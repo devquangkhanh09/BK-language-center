@@ -27,8 +27,10 @@ POST /api/admin/course-create
             cost
             numOfLecture
             curriculum:
-                lecture 
-                description
+                { 
+                    { lecture:
+                      description: }
+                }
     res:
         stautus: 200/400
         body: message
@@ -39,3 +41,42 @@ GET /api/admin/class:
             course_id
     res:
         [class]
+
+POST /api/class-create:
+    req:
+        body:
+            course_id
+            class_id
+            start_date
+            end_date
+            form
+            branch_id
+            room
+            time
+            teacher_id
+    res: 
+        status 200 | 400
+        message
+
+GET /api/admin/class-delete:
+    req:
+        query:
+            course_id
+            class_id
+    res: status 200 | 400
+        message
+
+GET /api/admin/course-delete:
+    req:
+        query:
+            course_id
+    res: status 200 | 400
+        messages
+
+GET /api/admin/studentClass:
+    req:
+        query:
+            course_id
+            class_id
+    res: 
+        {{student_info}}
