@@ -102,6 +102,20 @@ async function get_unpaid(){
     })
 }
 
+async function searchClassbyCourse(course_name) {
+    return new Promise((resolve, reject) => {
+        var class_query = 'SELECT * FROM class WHERE course_name = ' + course_name + '"';
+        dbconnect.query(class_query, (err, result, fields) =>{
+            if (err){
+                reject(err);
+            }
+            else {
+                resolve(result);
+            }
+        })
+    })
+}
+
 
 
 
@@ -124,11 +138,10 @@ router.get('/courses', async (req, res) => {
     stat.teacher = await getStatistics("teacher");
     dashboard_data.stat = stat;
     //-----COURSE INFO ------------------
-    //course_query = "SELECT * FROM course";
+    dashboard_data.courses = await get_all_courses();
 
     //----CLASS INFO ---------------------  
     dashboard_data.class = await get_all_class();
-    dashboard_data.courses = await get_all_courses();
     res.json(dashboard_data);
 })
 
@@ -145,6 +158,22 @@ router.get('/students', async (req, res) =>{
 router.get('/handle-register', async (req, res) =>{
     var unpaid_register = await get_unpaid();
     res.json(unpaid_register);    
+})
+
+router.get('/class', async (req, res) =>{
+    var data;
+    if (req.query.course_id === "") data = await get_all_class();
+    else data = await searchClassbyCourse(req.query.course_id);
+    res.json(data);    
+})
+
+router.post("/course-create", async (req, res) =>{
+    var sql = "INSERT INTO course (course_id,name,type,requirement,target,cost,numOfLecture) VALUES (?,?,?,?,?,?,?)";
+    dbconnect.query(sql, [req.query.id, req.body.name, req.body.type, req.query.requirement, req.query.target, req.query.cost, 10], (err,result) => {
+        if (err) {
+            console.log(err);
+        }
+    });
 })
 
 module.exports = router;
