@@ -56,7 +56,7 @@ router.get('/students', async (req, res) =>{
 
 router.get('/handle-register', async (req, res) =>{
     var unpaid_register = await get_unpaid();
-    res.json(unpaid_register);    
+    res.json({registers: unpaid_register});    
 })
 
 router.get('/class', async (req, res) =>{

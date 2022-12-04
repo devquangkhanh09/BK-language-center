@@ -72,7 +72,11 @@ exports.get_all_student = async function() {
 
 exports.get_unpaid = async function() {
     return new Promise((resolve, reject) => {
-        class_query = 'SELECT * FROM student_class WHERE status = "unpaid"';
+        class_query = `
+            SELECT course_id, class_id, student_id, full_name AS student_name, cost, register_date
+            FROM (student_class JOIN user ON student_id = id) NATURAL JOIN course
+            WHERE status = "unpaid"
+        `;
         dbconnect.query(class_query, (err, result, fields) =>{
             if (err) {
                 reject(err);
