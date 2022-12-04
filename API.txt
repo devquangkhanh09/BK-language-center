@@ -1,10 +1,10 @@
-GET /admin/handle-register:
+GET /api/admin/handle-register:
     req:
     res:
         body: 
             registers: [{course_id, class_id, student_id, student_name, cost, register_date}]
 
-PUT /admin/handle-register:
+PUT /api/admin/handle-register:
     req:
         body:
             course_id
