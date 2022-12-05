@@ -95,6 +95,26 @@ router.post("/course-create", async (req, res) =>{
     res.send("Course added successfully");
 })
 
+router.post("/course-create", async (req, res) =>{
+    var course_sql = "CALL updateCourse (??,??,??,??,??,??,??)";
+    var cur_sql = "UPDATE course-curriculum SET description = ?? WHERE course_id = ?? AND lecture = ??";
+    var course_id = req.body.id;
+    dbconnect.query(course_sql, [req.body.id, req.body.name, req.body.type, req.body.requirement, req.body.target, req.body.cost, req.body.numOfLecture], (err,result) => {
+        if (err) {
+            res.status(400);
+        }
+    });
+    var cur = req.body.curriculum;
+    cur.forEach(element => {
+        dbconnect.query(cur_sql, [element.description, course_id, element.lecture], (err,result) => {
+            if (err) {
+                res.status(400);
+            }
+        })
+    });
+    res.send("Course edit successfully");
+})
+
 router.post("/class-create", async (req, res) =>{
     var course_sql = "INSERT INTO `class` (`course_id`,`class_id`,`start_date`,`end_date`,`form`,`branch_id`,`room`,`time`,`teacher_id`,`status`,`numOfStudent`) VALUES (??,??,??,??,??,??,??,??,??)";
     dbconnect.query(course_sql, [req.body.course_id, req.body.class_id, req.body.start_date, req.body.end_date, req.body.form, req.body.branch_id, req.body.room, req.body.time, req.body.teacher_id,"future", 0], (err,result) => {

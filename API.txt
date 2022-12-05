@@ -34,6 +34,25 @@ POST /api/admin/course-create
     res:
         stautus: 200/400
         body: message
+
+POST /api/admin/course-edit
+    req:
+        body:
+            id 
+            name 
+            type 
+            requirement 
+            target 
+            cost
+            numOfLecture
+            curriculum:
+                { 
+                    { lecture:
+                      description: }
+                }
+    res:
+        stautus: 200/400
+        body: message
         
 GET /api/admin/class:
     req:

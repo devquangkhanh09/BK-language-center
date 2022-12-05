@@ -385,10 +385,12 @@ DELIMITER ;
 
 
 DELIMITER $$
-DROP PROCEDURE IF EXISTS `studentInClass` $$
-CREATE PROCEDURE `studentInClass` ( ) 
+DROP PROCEDURE IF EXISTS `updateCourse` $$
+CREATE PROCEDURE `updateCourse` (_course_id CHAR(5), _name VARCHAR(50), _type VARCHAR(10), _requirement float, _target float, _cost float, _numOfLecture int) 
 BEGIN
-    SELECT * FROM `class`;
+    UPDATE course
+    SET name = _name, type = _type, requirement = _requirement, target = _target, cost = _cost, numOfLecture = _numOfLecture
+    WHERE course_id = _course_id;
 END $$
 
 DELIMITER ;
