@@ -384,6 +384,13 @@ END $$
 DELIMITER ;
 
 
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `studentInClass` $$
+CREATE PROCEDURE `studentInClass` ( ) 
+BEGIN
+    SELECT * FROM `class`;
+END $$
 
+DELIMITER ;
 
 

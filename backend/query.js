@@ -115,3 +115,31 @@ exports.studentInClass = async function(course_name, class_name) {
         })
     })
 }
+
+exports.studentInfo = async function(student_id) {
+    return new Promise((resolve, reject) => {
+        var stu_query = 'SELECT (id,ssn,full_name,phone_number,email,address,level_overall,level_listening,level_reading,level_writing,level_speaking) FROM user INNER JOIN student ON user.id = student.id WHERE user.id = ??'
+        dbconnect.query(stu_query, [student_id], (err, result, fields) =>{
+            if (err){
+                reject(err);
+            }
+            else {
+                resolve(result[0]);
+            }
+        })
+    })
+}
+
+exports.teacherInfo = async function(teacher_id) {
+    return new Promise((resolve, reject) => {
+        var tec_query = 'SELECT (id,ssn,full_name,phone_number,email,address,start_date,exp_year,level_overall,level_listening,level_reading,level_writing,level_speaking,type) FROM user INNER JOIN teacher ON user.id = teacher.id WHERE user.id = ??'
+        dbconnect.query(tec_query, [teacher_id], (err, result, fields) =>{
+            if (err){
+                reject(err);
+            }
+            else {
+                resolve(result[0]);
+            }
+        })
+    })
+}

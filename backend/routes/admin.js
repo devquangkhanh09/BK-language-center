@@ -105,11 +105,6 @@ router.post("/class-create", async (req, res) =>{
     res.send("Course added successfully");
 })
 
-router.get("/studentClass", async (req, res) => {
-    var student = await studentInClass(req.query.course_id, req.query.class_id);
-    res.json(student);
-})
-
 router.get("/class-delete", async (req, res) =>{
     var class_sql = "CALL delete_class(??, ??)";
     dbconnect.query(class_sql, [req.body.course_id, req.body.class_id], (err,result) => {
