@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 //@mui
 import {
   TextField,
-  Link,
   Button,
   Typography,
   Box,
@@ -31,6 +30,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [values, setValues] = useState(initialFValues);
   const [errors, setErrors] = useState({});
+  const [signInError, setSignInError] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,7 +51,7 @@ export default function LoginForm() {
 
     // return true if there aren't any errors
     return Object.values(temp).every((x) => x === "");
-  }
+  };
 
   const resetForm = () => {
     setValues(initialFValues);
@@ -61,22 +61,21 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateNotEmpty()) {
-      const result = await axios.post('/api/signin-admin', values);
-      if (result.status === 200) {
-        localStorage.setItem("isAuthenticated", true);
-        localStorage.setItem("role", result.data.role);
-        navigate("/admin/courses", { replace: true });
-      }
-      else setErrors({signin: "Sai tên đăng nhập hoặc mật khẩu"});
-
-      // TO-DO: handle signin fail
+      axios
+        .post("/api/signin-admin", values)
+        .then((res) => {
+           localStorage.setItem("isAuthenticated", true);
+           localStorage.setItem("role", res.data.role);
+           navigate("/admin/courses", { replace: true });
+        })
+        .catch((error) => setSignInError(true));
       resetForm();
     }
   };
 
-  const handleNavToRegister = () => {
-    navigate("/register", { replace: true });
-  }
+  const navToStart = () => {
+    navigate("/", { replace: true });
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -127,7 +126,7 @@ export default function LoginForm() {
               error: true,
               helperText: errors.password,
             })}
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? "password" : "text"}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -143,33 +142,24 @@ export default function LoginForm() {
               ),
             }}
           />
-
+          {signInError ? (
+            <Typography variant="body2" color="error">
+              <em>Nhập sai tên tài khoản hoặc mật khẩu.</em>
+            </Typography>
+          ) : null}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ height: 50, my: 2 }}
+            sx={{ height: 50, mt: 2, mb: 1 }}
             onClick={handleSubmit}
           >
             Đăng nhập
           </Button>
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 0.5,
-          }}
-        >
-          <Typography variant="body2">Bạn chưa có tài khoản?</Typography>
-          <Link
-            onClick={handleNavToRegister}
-            tabIndex={0}
-            component="button"
-            variant="body2"
-          >
-            {"Đăng ký"}
-          </Link>
-        </Box>
+        <Button onClick={navToStart} sx={{ fontWeight: 500 }}>
+          Quay lại
+        </Button>
       </Box>
     </Container>
   );
