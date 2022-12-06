@@ -14,8 +14,6 @@ import {
 // components
 import Iconify from "../../components/iconify";
 
-import Logo from "../../assets/logo.png";
-
 const initialFValues = {
   full_name: "",
   phone_number: "",
@@ -83,17 +81,7 @@ export default function LoginForm() {
         alignItems: "center",
       }}
     >
-      <Box
-        component="img"
-        sx={{
-          height: 100,
-          width: 100,
-          m: 2,
-        }}
-        alt="bklogo"
-        src={Logo}
-      />
-      <Typography component="h1" variant="h4">
+      <Typography component="h1" variant="h3">
         Đăng ký học viên
       </Typography>
 
@@ -127,51 +115,48 @@ export default function LoginForm() {
           />
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Tên tài khoản"
-            name="username"
-            value={values.username}
-            onChange={handleInputChange}
-            {...(errors.username && {
-              error: true,
-              helperText: errors.username,
-            })}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Mật khẩu"
-            name="password"
-            value={values.password}
-            onChange={handleInputChange}
-            {...(errors.password && {
-              error: true,
-              helperText: errors.password,
-            })}
-            type={showPassword ? "password" : "text"}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    <Iconify
-                      icon={showPassword ? "eva:eye-fill" : "eva:eye-off-fill"}
-                    />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
+
+      <TextField
+        margin="normal"
+        fullWidth
+        label="Tên tài khoản"
+        name="username"
+        value={values.username}
+        onChange={handleInputChange}
+        {...(errors.username && {
+          error: true,
+          helperText: errors.username,
+        })}
+      />
+
+      <TextField
+        margin="normal"
+        fullWidth
+        label="Mật khẩu"
+        name="password"
+        value={values.password}
+        onChange={handleInputChange}
+        {...(errors.password && {
+          error: true,
+          helperText: errors.password,
+        })}
+        type={showPassword ? "password" : "text"}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                <Iconify
+                  icon={showPassword ? "eva:eye-fill" : "eva:eye-off-fill"}
+                />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+
       <Button
         type="submit"
         fullWidth

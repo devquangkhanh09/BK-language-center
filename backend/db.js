@@ -4,7 +4,7 @@ require('dotenv').config();
 exports.connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: process.env.MYSQL_PASSWORD,
+    password: "10042002",
     database : "language_center"
 });
   

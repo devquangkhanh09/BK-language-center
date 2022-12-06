@@ -33,6 +33,14 @@ const TABLE_HEAD = [
   { id: "option" }
 ];
 
+//--------------------------------------------------
+
+const toDateFormat = (date) => {
+  return date.split("T")[0];
+};
+
+//--------------------------------------------------
+
 export default function HandleClassRegisterPage() {
   const navigate = useNavigate();
 
@@ -122,9 +130,8 @@ export default function HandleClassRegisterPage() {
 
           <TextField 
             id="outlined-search" 
-            label="Tìm kiếm" 
+            label="Tìm kiếm theo tên" 
             type="search" 
-            helperText="Tìm kiếm đăng ký theo tên học viên"
             onChange={handleSearchChange}
           />
         </Stack>
@@ -160,7 +167,7 @@ export default function HandleClassRegisterPage() {
 
                           <TableCell align="left">{cost}</TableCell>
 
-                          <TableCell align="left">{register_date}</TableCell>
+                          <TableCell align="left">{toDateFormat(register_date)}</TableCell>
 
                           <TableCell
                             align="left"

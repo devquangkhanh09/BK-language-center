@@ -1,4 +1,4 @@
-use langcenter;
+USE `language_center`;
 CREATE ROLE 'pip-admin', 'pip-teacher', 'pip-student';
 
 GRANT ALL PRIVILEGES ON DB_ASS.* TO 'pip-admin';

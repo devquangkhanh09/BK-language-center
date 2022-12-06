@@ -2,7 +2,7 @@
 import { Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-import RegisterForm from "./RegisterForm";
+import RoleOptions from "./RoleOptions.js";
 
 import LoginBg from "../../assets/startbg.jpg";
 
@@ -20,17 +20,16 @@ const StyledRoot = styled("div")({
 });
 
 const StyledPaper = styled(Paper)({
-  padding: 30,
-  paddingTop: 40,
-  height: "92vh",
-  width: 500,
+  padding: 20,
+  height: "95vh",
+  width: 450,
 });
 
 export default function LoginPage() {
   return (
     <StyledRoot>
       <StyledPaper>
-        <RegisterForm />
+        <RoleOptions />
       </StyledPaper>
     </StyledRoot>
   );
