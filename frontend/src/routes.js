@@ -2,6 +2,7 @@ import { Navigate, useRoutes } from "react-router-dom";
 
 import AppLayout from "./layouts";
 
+import StartPage from "./pages/start-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
 import CourseAdminPage from "./pages/course-admin";
@@ -57,6 +58,18 @@ export default function Router() {
     },
     {
       path: "/",
+      element: <StartPage />,
+    },
+    {
+      path: "/login-admin",
+      element: <LoginPage />,
+    },
+    {
+      path: "/login-teacher",
+      element: <LoginPage />,
+    },
+    {
+      path: "/login-student",
       element: <LoginPage />,
     },
     {

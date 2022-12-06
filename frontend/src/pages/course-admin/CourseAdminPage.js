@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
 
 //@mui
 import {
@@ -18,6 +16,8 @@ import {
   TableCell,
   IconButton,
   TablePagination,
+  Popover,
+  MenuItem,
 } from "@mui/material";
 // components
 import Iconify from "../../components/iconify";
@@ -33,6 +33,7 @@ const TABLE_HEAD = [
   { id: "target", label: "Mục tiêu", align: "center" },
   { id: "cost", label: "Phí", align: "left" },
   { id: "num_of_lec", label: "Số buổi", align: "center" },
+  { id: "view_class" },
   { id: "option" },
 ];
 
@@ -60,8 +61,8 @@ export default function CourseAdminPage() {
         var myList = res.data.courses;
         setCourseList(myList);
       })
-      .catch((error) => navigate('/', {replace: true}));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      .catch((error) => navigate("/", { replace: true }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //--------------------------------------
@@ -84,6 +85,18 @@ export default function CourseAdminPage() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - courseList.length) : 0;
   //--------------------------------------
+
+  const [open, setOpen] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  //----------------------------------------
 
   return (
     <>
@@ -141,24 +154,23 @@ export default function CourseAdminPage() {
 
                           <TableCell align="center">{numOfLecture}</TableCell>
 
-                          <TableCell
-                            align="left"
-                            sx={{
-                              display: "flex",
-                            }}
-                          >
+                          <TableCell align="center">
                             <Button
                               variant="outlined"
                               sx={{ fontSize: "13px", borderRadius: 30 }}
                               onClick={navToClass}
                             >
-                              Xem lớp
+                              Xem các lớp
                             </Button>
-                            <IconButton onClick={() => setOpenConfirm(true)}>
-                              <DeleteIcon />
-                            </IconButton>
-                            <IconButton onClick={navToEdit}>
-                              <BorderColorIcon />
+                          </TableCell>
+
+                          <TableCell align="right">
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={(e) => handleOpenMenu(e)}
+                            >
+                              <Iconify icon={"eva:more-vertical-fill"} />
                             </IconButton>
                           </TableCell>
                         </TableRow>
@@ -185,11 +197,49 @@ export default function CourseAdminPage() {
           />
         </Card>
       </Container>
+
       <ConfirmPopup
         open={openConfirm}
         setOpen={setOpenConfirm}
         content="Bạn có chắc chắn muốn xóa khóa học này?"
       />
+
+      <Popover
+        open={Boolean(open)}
+        anchorEl={open}
+        onClose={handleCloseMenu}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        PaperProps={{
+          sx: {
+            p: 1,
+            width: 180,
+            "& .MuiMenuItem-root": {
+              px: 1,
+              typography: "body2",
+              borderRadius: 0.75,
+            },
+          },
+        }}
+      >
+        <MenuItem onClick={navToEdit}>
+          <Iconify icon={"material-symbols:book-rounded"} sx={{ mr: 2 }} />
+          Chương trình học
+        </MenuItem>
+
+        <MenuItem onClick={navToEdit}>
+          <Iconify icon={"material-symbols:edit"} sx={{ mr: 2 }} />
+          Chỉnh sửa
+        </MenuItem>
+
+        <MenuItem
+          sx={{ color: "error.main" }}
+          onClick={() => setOpenConfirm(true)}
+        >
+          <Iconify icon={"mdi:trash-can-outline"} sx={{ mr: 2 }} />
+          Xóa
+        </MenuItem>
+      </Popover>
     </>
   );
 }

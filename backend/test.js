@@ -18,25 +18,21 @@ dbconnect.connect(function(err) {
     }
 });
 
-function getStatistics(field){
-    query = "SELECT COUNT(*) FROM " + field;
-    return new Promise((reject, resolve) => {
-        dbconnect.connect((err) => {
-            if (err) reject(err);
-        })
-        dbconnect.query(query, (err, result, fields) =>{
-            if (err){
-                console.log("err");
-                reject(err);
-            }
-            else {
-                resolve(resolve);
-                //console.log(result);
-                //console.log(fields);
-            }
-        })
-    })
-}
-
-a = getStatistics("course");
-console.log("a: ", a);
+var course_sql =
+  "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,10)";
+  dbconnect.query(
+    course_sql,
+    [
+      'a',
+      'a',
+      'a',
+      0,
+      0,
+      0
+    ],
+    (err, result) => {
+      if (err) {
+        res.status(400);
+      }
+    }
+  );
