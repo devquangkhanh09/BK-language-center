@@ -233,7 +233,7 @@ export default function CourseCreatePage() {
                   value={courseInfo.type}
                   onChange={handleInputChange}
                 >
-                  <MenuItem value="OVERRALL">OVERRALL</MenuItem>
+                  <MenuItem value="OVERALL">OVERALL</MenuItem>
                   <MenuItem value="LISTENING">LISTENING</MenuItem>
                   <MenuItem value="READING">READING</MenuItem>
                   <MenuItem value="SPEAKING">SPEAKING</MenuItem>

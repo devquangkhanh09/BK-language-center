@@ -18,21 +18,23 @@ dbconnect.connect(function(err) {
     }
 });
 
+var a = 'a';
+var b =0;
 var course_sql =
-  "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,10)";
+  "INSERT INTO course (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,10)";
   dbconnect.query(
     course_sql,
     [
-      'a',
-      'a',
-      'a',
-      0,
-      0,
-      0
+      a,
+      a,
+      a,
+      b,
+      b,
+      b
     ],
     (err, result) => {
       if (err) {
-        res.status(400);
+        console.log(err);
       }
     }
   );

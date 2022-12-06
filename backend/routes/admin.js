@@ -89,9 +89,10 @@ router.get("/class", async (req, res) => {
 
 router.post("/course-create", async (req, res) => {
   var course_sql =
-    "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,10)";
+    "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost``) VALUES (?,?,?,?,?,?)";
   var cur_sql =
     "INSERT INTO `course_curriculum` (`course_id`,`lecture`,`description`) VALUES (?,?,?)";
+  var num = 0;
   var course_id = req.body.id;
   dbconnect.query(
     course_sql,
@@ -112,6 +113,7 @@ router.post("/course-create", async (req, res) => {
   console.log(course_id);
   var cur = req.body.curriculum;
   cur.forEach((element) => {
+    num++;
     dbconnect.query(
       cur_sql,
       [course_id, element.lecture, element.description],
@@ -122,12 +124,18 @@ router.post("/course-create", async (req, res) => {
       }
     );
   });
+  var upnum = "UPDATE course SET numOfLecture = ? WHERE course_id = ?";
+  dbconnect.query(upnum, [num, course_id], (err, result) => {
+    if (err) {
+      res.status(400);
+    }
+  });
   res.send("Course added successfully");
 });
 
 router.post("/course-edit", async (req, res) =>{
-    var course_sql = "CALL updateCourse (??,??,??,??,??,??,??)";
-    var cur_sql = "UPDATE course-curriculum SET description = ?? WHERE course_id = ?? AND lecture = ??";
+    var course_sql = "CALL updateCourse (?,?,?,?,?,?,?)";
+    var cur_sql = "UPDATE course-curriculum SET description = ? WHERE course_id = ? AND lecture = ?";
     var course_id = req.body.id;
     dbconnect.query(course_sql, [req.body.id, req.body.name, req.body.type, req.body.requirement, req.body.target, req.body.cost, req.body.numOfLecture], (err,result) => {
         if (err) {
@@ -146,7 +154,7 @@ router.post("/course-edit", async (req, res) =>{
 })
 
 router.post("/class-create", async (req, res) =>{
-    var course_sql = "INSERT INTO `class` (`course_id`,`class_id`,`start_date`,`end_date`,`form`,`branch_id`,`room`,`time`,`teacher_id`,`status`,`numOfStudent`) VALUES (??,??,??,??,??,??,??,??,??)";
+    var course_sql = "INSERT INTO `class` (`course_id`,`class_id`,`start_date`,`end_date`,`form`,`branch_id`,`room`,`time`,`teacher_id`,`status`,`numOfStudent`) VALUES (?,?,?,?,?,?,?,?,?)";
     dbconnect.query(course_sql, [req.body.course_id, req.body.class_id, req.body.start_date, req.body.end_date, req.body.form, req.body.branch_id, req.body.room, req.body.time, req.body.teacher_id,"future", 0], (err,result) => {
         if (err) {
           res.status(400);
@@ -159,7 +167,7 @@ router.post("/class-create", async (req, res) =>{
 
 router.post("/class-create", async (req, res) => {
   var course_sql =
-    "INSERT INTO `class` (`course_id`,`class_id`,`start_date`,`end_date`,`form`,`branch_id`,`room`,`time`,`teacher_id`,`status`,`numOfStudent`) VALUES (??,??,??,??,??,??,??,??,??)";
+    "INSERT INTO `class` (`course_id`,`class_id`,`start_date`,`end_date`,`form`,`branch_id`,`room`,`time`,`teacher_id`,`status`,`numOfStudent`) VALUES (?,?,?,?,?,?,?,?,?)";
   dbconnect.query(
     course_sql,
     [
@@ -185,7 +193,7 @@ router.post("/class-create", async (req, res) => {
 });
 
 router.get("/class-delete", async (req, res) => {
-  var class_sql = "CALL delete_class(??, ??)";
+  var class_sql = "CALL delete_class(?, ?)";
   dbconnect.query(
     class_sql,
     [req.body.course_id, req.body.class_id],
@@ -199,7 +207,7 @@ router.get("/class-delete", async (req, res) => {
 });
 
 router.get("/course-delete", async (req, res) => {
-  var course_sql = "CALL delete_course(??)";
+  var course_sql = "CALL delete_course(?)";
   dbconnect.query(course_sql, [req.body.course_id], (err, result) => {
     if (err) {
       res.status(400);
