@@ -95,7 +95,7 @@ router.post("/course-create", async (req, res) =>{
     res.send("Course added successfully");
 })
 
-router.post("/course-create", async (req, res) =>{
+router.post("/course-edit", async (req, res) =>{
     var course_sql = "CALL updateCourse (??,??,??,??,??,??,??)";
     var cur_sql = "UPDATE course-curriculum SET description = ?? WHERE course_id = ?? AND lecture = ??";
     var course_id = req.body.id;
