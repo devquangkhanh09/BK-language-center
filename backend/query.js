@@ -111,6 +111,117 @@ exports.searchClassbyCourse = async function (course_name) {
   });
 };
 
+exports.createCourse = async function (
+  id,
+  name,
+  type,
+  requirement,
+  target,
+  cost
+) {
+  return new Promise((resolve, reject) => {
+    var course_sql =
+      "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,0)";
+    dbconnect.query(
+      course_sql,
+      [id, name, type, requirement, target, cost],
+      (err, result, fields) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+exports.createCourseCur = async function (id, lecture, description) {
+  return new Promise((resolve, reject) => {
+    var cur_sql =
+      "INSERT INTO `course_curriculum` (`course_id`,`lecture`,`description`) VALUES (?,?,?)";
+    dbconnect.query(
+      cur_sql,
+      [id, lecture, description],
+      (err, result, fields) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+exports.updateCourse = async function (
+  id,
+  name,
+  type,
+  requirement,
+  target,
+  cost
+) {
+  return new Promise((resolve, reject) => {
+    var course_sql = "CALL updateCourse (?,?,?,?,?,?,?)";
+    dbconnect.query(
+      course_sql,
+      [id, name, type, requirement, target, cost],
+      (err, result, fields) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+exports.updateCourseCur = async function (id, lecture, description) {
+  return new Promise((resolve, reject) => {
+    var cur_sql =
+      "UPDATE course_curriculum SET description = ? WHERE course_id = ? AND lecture = ?";
+    dbconnect.query(
+      cur_sql,
+      [id, lecture, description],
+      (err, result, fields) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
+exports.updateNumCur = async function (id, numCur) {
+  return new Promise((resolve, reject) => {
+    var cur_sql = "UPDATE course SET numOfCurriculum = ? WHERE course_id = ?";
+    dbconnect.query(cur_sql, [id, numCur], (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+exports.deleteCur = async function (id) {
+  return new Promise((resolve, reject) => {
+    var cur_sql = "DELETE FROM course_curriculum WHERE course_id = ?";
+    dbconnect.query(cur_sql, [id], (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 exports.studentInClass = async function (course_name, class_name) {
   return new Promise((resolve, reject) => {
     var class_query =
