@@ -26,12 +26,27 @@ exports.get_all_courses = async function () {
   });
 };
 
+exports.get_all_curriculums = async function () {
+  return new Promise((resolve, reject) => {
+    course_query = "SELECT * FROM course_curriculum";
+    dbconnect.query(course_query, (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+
 exports.get_all_class = async function () {
   return new Promise((resolve, reject) => {
     class_query = "SELECT * FROM class";
     dbconnect.query(class_query, (err, result, fields) => {
       if (err) {
         reject(err);
+        console.log(err);
       } else {
         resolve(result);
       }

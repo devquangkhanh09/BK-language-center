@@ -32,7 +32,7 @@ const TABLE_HEAD = [
 
 //--------------------------------------------------
 
-export default function TeacherAdminPage() {
+export default function StudentAdminPage() {
   const navigate = useNavigate();
 
   //----------------------------------------------------

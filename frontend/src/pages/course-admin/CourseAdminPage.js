@@ -31,11 +31,19 @@ const TABLE_HEAD = [
   { id: "type", label: "Loại", align: "left" },
   { id: "requirement", label: "Yêu cầu", align: "center" },
   { id: "target", label: "Mục tiêu", align: "center" },
-  { id: "cost", label: "Phí", align: "left" },
+  { id: "cost", label: "Phí (VND)", align: "left" },
   { id: "num_of_lec", label: "Số buổi", align: "center" },
   { id: "view_class" },
   { id: "option" },
 ];
+
+//----------------------------------------------
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+//----------------------------------------------
 
 export default function CourseAdminPage() {
   const navigate = useNavigate();
@@ -48,8 +56,12 @@ export default function CourseAdminPage() {
     navigate("/admin/course-edit", { replace: true });
   };
 
-  const navToClass = () => {
-    navigate("/admin/classes", { replace: true });
+  const navToClass = (id) => {
+    navigate(`/admin/classes/${id}`, { replace: true });
+  };
+
+  const navToCurriculum = (id) => {
+    navigate(`/admin/course-curriculum/${id}`, { replace: true });
   };
 
   //-------------------------------------------------------------
@@ -97,6 +109,8 @@ export default function CourseAdminPage() {
   };
 
   //----------------------------------------
+  
+  const [courseID, setCourseID] = useState("");
 
   return (
     <>
@@ -150,7 +164,9 @@ export default function CourseAdminPage() {
 
                           <TableCell align="center">{target}</TableCell>
 
-                          <TableCell align="left">{cost}</TableCell>
+                          <TableCell align="left">
+                            {numberWithCommas(cost)}
+                          </TableCell>
 
                           <TableCell align="center">{numOfLecture}</TableCell>
 
@@ -158,7 +174,7 @@ export default function CourseAdminPage() {
                             <Button
                               variant="outlined"
                               sx={{ fontSize: "13px", borderRadius: 30 }}
-                              onClick={navToClass}
+                              onClick={() => navToClass(course_id)}
                             >
                               Xem các lớp
                             </Button>
@@ -168,7 +184,7 @@ export default function CourseAdminPage() {
                             <IconButton
                               size="large"
                               color="inherit"
-                              onClick={(e) => handleOpenMenu(e)}
+                              onClick={(e) => {handleOpenMenu(e); setCourseID(course_id)}}
                             >
                               <Iconify icon={"eva:more-vertical-fill"} />
                             </IconButton>
@@ -222,7 +238,7 @@ export default function CourseAdminPage() {
           },
         }}
       >
-        <MenuItem onClick={navToEdit}>
+        <MenuItem onClick={() => navToCurriculum(courseID)}>
           <Iconify icon={"material-symbols:book-rounded"} sx={{ mr: 2 }} />
           Chương trình học
         </MenuItem>

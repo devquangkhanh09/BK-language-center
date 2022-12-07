@@ -35,15 +35,9 @@ const initCourse = {
   id: "",
   name: "",
   type: "",
-<<<<<<< HEAD
   requirement: "",
   target: "",
   cost: "",
-=======
-  requirement: -1,
-  target: -1,
-  cost: -1,
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
   numOfLecture: 0,
 };
 
@@ -61,6 +55,10 @@ export default function CourseCreatePage() {
 
   const navigate = useNavigate();
 
+  const navToCourse = () => {
+    navigate("/admin/courses", { replace: true });
+  };
+
   //------------------------------------------------
 
   const [courseInfo, setCourseInfo] = useState(initCourse);
@@ -72,15 +70,9 @@ export default function CourseCreatePage() {
       field.id === "" ||
       field.name === "" ||
       field.type === "" ||
-<<<<<<< HEAD
       field.requirement === "" ||
       field.target === "" ||
       field.cost === "";
-=======
-      !field.requirement ||
-      !field.target ||
-      !field.cost;
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
     if (bool_exp) setError(true);
     else setError(false);
     return !bool_exp;
@@ -103,40 +95,22 @@ export default function CourseCreatePage() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (validateNotEmpty()) {
-<<<<<<< HEAD
-=======
-      //console.log(courseInfo);
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
       const newCourse = {
         id: courseInfo.id,
         name: courseInfo.name,
         type: courseInfo.type,
-<<<<<<< HEAD
         requirement: parseFloat(courseInfo.requirement),
         target: parseFloat(courseInfo.target),
         cost: parseFloat(courseInfo.cost),
         numOfLecture: parseInt(curriculum.length),
         curriculum: curriculum,
       };
-=======
-        requirement: courseInfo.requirement,
-        target: courseInfo.target,
-        cost: courseInfo.cost,
-        numOfLecture: curriculum.length,
-        curriculum: curriculum,
-      };
-      //console.log(newCourse.id);
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
       axios
         .post("/api/admin/course-create", newCourse)
         .then((res) => {
           //to-do: handle success
           setActStatus(true);
           setOpenNoti(true);
-<<<<<<< HEAD
-          console.log(res.data);
-=======
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
         })
         .catch((error) => {
           //to-do: handle fail
@@ -219,6 +193,13 @@ export default function CourseCreatePage() {
   return (
     <>
       <Container>
+        <Button
+          startIcon={<Iconify icon="material-symbols:arrow-back" />}
+          onClick={navToCourse}
+          sx={{ mb: 2 }}
+        >
+          Quay lại
+        </Button>
         <Typography variant="h4" gutterBottom>
           Tạo khóa học
         </Typography>
@@ -275,10 +256,6 @@ export default function CourseCreatePage() {
                 name="requirement"
                 value={courseInfo.requirement}
                 onChange={handleInputChange}
-<<<<<<< HEAD
-=======
-                type="number"
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
               />
               <TextField
                 margin="normal"
@@ -287,10 +264,6 @@ export default function CourseCreatePage() {
                 name="target"
                 value={courseInfo.target}
                 onChange={handleInputChange}
-<<<<<<< HEAD
-=======
-                type="number"
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
               />
               <TextField
                 margin="normal"
@@ -299,10 +272,6 @@ export default function CourseCreatePage() {
                 name="cost"
                 value={courseInfo.cost}
                 onChange={handleInputChange}
-<<<<<<< HEAD
-=======
-                type="number"
->>>>>>> e160bf8fe8f7cdc4c92f440f4acebf0dac3f9bb4
               />
               {error ? (
                 <Typography variant="body2" color="error">

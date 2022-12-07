@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
+import { useNavigate, useParams } from "react-router-dom";
 
 //@mui
 import {
@@ -18,12 +16,22 @@ import {
   TableCell,
   IconButton,
   TablePagination,
+  Popover,
+  MenuItem,
+  Grid,
+  Box,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 // components
 import Iconify from "../../components/iconify";
 import Scrollbar from "../../components/scrollbar";
 import ConfirmPopup from "../../components/confirm-popup";
 import ListHead from "../../components/list-head";
+import Popup from "../../components/popup";
+import Notification from "../../components/notification";
 
 const TABLE_HEAD = [
   { id: "class_id", label: "Mã lớp", align: "left" },
@@ -39,16 +47,27 @@ const TABLE_HEAD = [
   { id: "option" },
 ];
 
+//-------------------------------------------------
+
+const initClass = {
+  class_id: "",
+  start_date: "",
+  end_date: "",
+  form: "",
+  branch_id: "",
+  room: "",
+  time: "",
+  teacher_id: "",
+  status: "incoming",
+  numOfStudent: 0,
+};
+
+//-------------------------------------------------
+
 export default function ClassAdminPage() {
   const navigate = useNavigate();
 
-  const navToCreate = () => {
-    navigate("/admin/course-create", { replace: true });
-  };
-
-  const navToEdit = () => {
-    navigate("/admin/course-edit", { replace: true });
-  };
+  const { id } = useParams();
 
   const navToCourse = () => {
     navigate("/admin/courses", { replace: true });
@@ -56,13 +75,15 @@ export default function ClassAdminPage() {
 
   //-------------------------------------------------------------
   const [classList, setClassList] = useState([]);
+
+  const [classID, setClassID] = useState("");
+
   useEffect(() => {
     axios
-      .get("/api/admin/classes")
+      .get("/api/admin/class")
       .then((res) => {
-        var myList = res.data.myList;
+        var myList = res.data.filter((item) => item.course_id === id);
         setClassList(myList);
-        console.log(myList);
       })
       .catch((error) => console.log(error));
   }, []);
@@ -80,13 +101,149 @@ export default function ClassAdminPage() {
   };
   //--------------------------------------
   const [openConfirm, setOpenConfirm] = useState(false);
-  const handleOpenConfirm = () => {
-    setOpenConfirm(true);
-  };
+
   //--------------------------------------
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - classList.length) : 0;
   //--------------------------------------
+
+  const [open, setOpen] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  //----------------------------------------
+
+  const [openPopup, setOpenPopup] = useState(false);
+
+  const [classInfo, setClassInfo] = useState(initClass);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setClassInfo({
+      ...classInfo,
+      [name]: value,
+    });
+  };
+
+  const resetForm = () => {
+    setClassInfo(initClass);
+  };
+
+  const handleSubmitInfo = (e) => {
+    e.preventDefault();
+    console.log(classInfo);
+    const newClass = { course_id: id, ...classInfo };
+    axios
+      .post("/api/admin/class-create", newClass)
+      .then((res) => {
+        //to-do: handle success
+        setActStatus(true);
+        setOpenNoti(true);
+        // insert in front-end
+        setClassList([newClass, ...classList]);
+      })
+      .catch((error) => {
+        //to-do: handle fail
+        setActStatus(false);
+        setOpenNoti(true);
+      });
+    resetForm();
+  };
+
+  //----------------------------------------
+
+  const [openNoti, setOpenNoti] = useState(false);
+
+  const [actStatus, setActStatus] = useState(false);
+
+  const handleCloseNoti = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenNoti(false);
+  };
+
+  //------------------------------------------------
+
+  const handleDeleteClass = () => {
+    const send_data = {
+      course_id: id,
+      class_id: classID,
+    };
+    axios
+      .post("/api/admin/class-delete", send_data)
+      .then((res) => {
+        setActStatus(true);
+        setOpenNoti(true);
+        setOpenConfirm(false);
+        // delete in front-end
+        var newClassList = classList.filter(
+          (item) => item.class_id !== classID
+        );
+        setClassList(newClassList);
+      })
+      .catch((error) => {
+        setActStatus(false);
+        setOpenNoti(true);
+      });
+  };
+
+  //----------------------------------------
+
+  const [openEditPopup, setOpenEditPopup] = useState(false);
+
+  const [classEditInfo, setClassEditInfo] = useState(initClass);
+
+  const handleInputEditChange = (e) => {
+    const { name, value } = e.target;
+    setClassEditInfo({
+      ...classEditInfo,
+      [name]: value,
+    });
+  };
+
+  const handleSubmitEditInfo = (e) => {
+    e.preventDefault();
+    axios
+      .post("/api/admin/class-edit", classEditInfo)
+      .then((res) => {
+        //to-do: handle success
+        setActStatus(true);
+        setOpenNoti(true);
+        // edit in front-end
+        var edited_item = { course_id: id, ...classEditInfo };
+        var new_list = [...classList];
+        for (var i in new_list) {
+          if (new_list[i].class_id === classID) {
+            new_list[i] = edited_item;
+            break;
+          }
+        }
+        setClassList(new_list);
+      })
+      .catch((error) => {
+        //to-do: handle fail
+        setActStatus(false);
+        setOpenNoti(true);
+      });
+  };
+
+  const handleOpenEditPopup = () => {
+    var edit_data = classList.filter((item) => item.class_id === classID)[0];
+    edit_data.start_date = edit_data.start_date.split("T")[0];
+    edit_data.end_date = edit_data.end_date.split("T")[0];
+    setClassEditInfo(edit_data);
+    setOpenEditPopup(true);
+    handleCloseMenu();
+  };
+
+  //----------------------------------------
 
   return (
     <>
@@ -99,7 +256,7 @@ export default function ClassAdminPage() {
           Quay lại
         </Button>
         <Typography variant="h2" gutterBottom>
-          FD-02
+          {id}
         </Typography>
         <Stack
           direction="row"
@@ -113,7 +270,7 @@ export default function ClassAdminPage() {
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:plus-fill" />}
-            onClick={navToCreate}
+            onClick={() => setOpenPopup(true)}
           >
             Tạo lớp học
           </Button>
@@ -166,17 +323,16 @@ export default function ClassAdminPage() {
                           <TableCell align="left">{status}</TableCell>
 
                           <TableCell align="center">{numOfStudent}</TableCell>
-                          <TableCell
-                            align="left"
-                            sx={{
-                              display: "flex",
-                            }}
-                          >
-                            <IconButton onClick={() => setOpenConfirm(true)}>
-                              <DeleteIcon />
-                            </IconButton>
-                            <IconButton onClick={navToEdit}>
-                              <BorderColorIcon />
+                          <TableCell align="right">
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={(e) => {
+                                handleOpenMenu(e);
+                                setClassID(class_id);
+                              }}
+                            >
+                              <Iconify icon={"eva:more-vertical-fill"} />
                             </IconButton>
                           </TableCell>
                         </TableRow>
@@ -203,10 +359,296 @@ export default function ClassAdminPage() {
           />
         </Card>
       </Container>
+
       <ConfirmPopup
         open={openConfirm}
         setOpen={setOpenConfirm}
         content="Bạn có chắc chắn muốn xóa lớp học này?"
+        confirmAction={handleDeleteClass}
+      />
+
+      <Popover
+        open={Boolean(open)}
+        anchorEl={open}
+        onClose={handleCloseMenu}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        PaperProps={{
+          sx: {
+            p: 1,
+            width: 180,
+            "& .MuiMenuItem-root": {
+              px: 1,
+              typography: "body2",
+              borderRadius: 0.75,
+            },
+          },
+        }}
+      >
+        <MenuItem onClick={handleOpenEditPopup}>
+          <Iconify icon={"material-symbols:edit"} sx={{ mr: 2 }} />
+          Chỉnh sửa
+        </MenuItem>
+
+        <MenuItem
+          sx={{ color: "error.main" }}
+          onClick={() => setOpenConfirm(true)}
+        >
+          <Iconify icon={"mdi:trash-can-outline"} sx={{ mr: 2 }} />
+          Xóa
+        </MenuItem>
+      </Popover>
+
+      <Popup
+        title="Tạo lớp học"
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                  gap: 3,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Mã lớp"
+                  name="class_id"
+                  value={classInfo.class_id}
+                  onChange={handleInputChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Ngày bắt đầu (YYYY-MM-DD)"
+                  name="start_date"
+                  value={classInfo.start_date}
+                  onChange={handleInputChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Ngày kết thúc (YYYY-MM-DD)"
+                  name="end_date"
+                  value={classInfo.end_date}
+                  onChange={handleInputChange}
+                />
+
+                <FormControl fullWidth>
+                  <InputLabel id="form-select-label">Hình thức</InputLabel>
+                  <Select
+                    labelId="form-select-label"
+                    label="Hình thức"
+                    name="form"
+                    value={classInfo.form}
+                    onChange={handleInputChange}
+                  >
+                    <MenuItem value="online">Online</MenuItem>
+                    <MenuItem value="offline">Offline</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                  gap: 3,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Chi nhánh"
+                  name="branch_id"
+                  value={classInfo.branch_id}
+                  onChange={handleInputChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Phòng học"
+                  name="room"
+                  value={classInfo.room}
+                  onChange={handleInputChange}
+                />
+
+                <FormControl fullWidth>
+                  <InputLabel id="time-select-label">Thời gian</InputLabel>
+                  <Select
+                    labelId="time-select-label"
+                    label="Thời gian"
+                    name="time"
+                    value={classInfo.time}
+                    onChange={handleInputChange}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    <MenuItem value={4}>4</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  fullWidth
+                  label="Giáo viên"
+                  name="teacher_id"
+                  value={classInfo.teacher_id}
+                  onChange={handleInputChange}
+                />
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Button variant="contained" sx={{ mt: 3 }} onClick={handleSubmitInfo}>
+            Xác nhận
+          </Button>
+        </Box>
+      </Popup>
+
+      <Popup
+        title="Chỉnh sửa lớp học"
+        openPopup={openEditPopup}
+        setOpenPopup={setOpenEditPopup}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                  gap: 3,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Mã lớp"
+                  name="class_id"
+                  value={classEditInfo.class_id}
+                  onChange={handleInputEditChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Ngày bắt đầu (YYYY-MM-DD)"
+                  name="start_date"
+                  value={classEditInfo.start_date}
+                  onChange={handleInputEditChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Ngày kết thúc (YYYY-MM-DD)"
+                  name="end_date"
+                  value={classEditInfo.end_date}
+                  onChange={handleInputEditChange}
+                />
+
+                <FormControl fullWidth>
+                  <InputLabel id="form-select-label">Hình thức</InputLabel>
+                  <Select
+                    labelId="form-select-label"
+                    label="Hình thức"
+                    name="form"
+                    value={classEditInfo.form}
+                    onChange={handleInputEditChange}
+                  >
+                    <MenuItem value="online">Online</MenuItem>
+                    <MenuItem value="offline">Offline</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                  gap: 3,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Chi nhánh"
+                  name="branch_id"
+                  value={classEditInfo.branch_id}
+                  onChange={handleInputEditChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Phòng học"
+                  name="room"
+                  value={classEditInfo.room}
+                  onChange={handleInputEditChange}
+                />
+
+                <FormControl fullWidth>
+                  <InputLabel id="time-select-label">Thời gian</InputLabel>
+                  <Select
+                    labelId="time-select-label"
+                    label="Thời gian"
+                    name="time"
+                    value={classEditInfo.time}
+                    onChange={handleInputEditChange}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    <MenuItem value={4}>4</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  fullWidth
+                  label="Giáo viên"
+                  name="teacher_id"
+                  value={classEditInfo.teacher_id}
+                  onChange={handleInputEditChange}
+                />
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Button
+            variant="contained"
+            sx={{ mt: 3 }}
+            onClick={handleSubmitEditInfo}
+          >
+            Xác nhận
+          </Button>
+        </Box>
+      </Popup>
+
+      <Notification
+        open={openNoti}
+        handleClose={handleCloseNoti}
+        status={actStatus}
       />
     </>
   );

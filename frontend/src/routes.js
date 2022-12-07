@@ -12,6 +12,7 @@ import ClassAdminPage from "./pages/class-admin";
 import TeacherAdminPage from "./pages/teacher-admin";
 import StudentAdminPage from "./pages/student-admin";
 import HandleClassRegisterPage from "./pages/handle-register";
+import Curriculum from "./pages/curriculum"
 
 const ProtectedRoute = ({ role, children }) => {
   
@@ -48,7 +49,11 @@ export default function Router() {
           element: <CourseEditPage />,
         },
         {
-          path: "classes",
+          path: "course-curriculum/:id",
+          element: <Curriculum />,
+        },
+        {
+          path: "classes/:id",
           element: <ClassAdminPage />,
         },
         { path: "teachers", element: <TeacherAdminPage /> },
