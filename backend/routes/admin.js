@@ -136,28 +136,24 @@ router.post("/course-create", async (req, res) => {
 });
 
 router.post("/course-edit", async (req, res) => {
-  var course_sql = "CALL updateCourse (??,??,??,??,??,??,??)";
-  var cur_sql =
-    "UPDATE course_curriculum SET description = ?? WHERE course_id = ?? AND lecture = ??";
-  var course_id = req.body.id;
-  dbconnect.query(
-    course_sql,
-    [
-      req.body.id,
-      req.body.name,
-      req.body.type,
-      req.body.requirement,
-      req.body.target,
-      req.body.cost,
-      req.body.numOfLecture,
-    ],
-    (err, result) => {
-      if (err) {
-        res.status(400);
-      }
-    }
+  await updateCourse(
+    req.body.id,
+    req.body.name,
+    req.body.type,
+    req.body.requirement,
+    req.body.target,
+    req.body.cost
   );
-  res.send("Course edit successfully");
+  var course_id = req.body.id;
+  var cur = req.body.curriculum;
+  var num = 0;
+  await deleteCur(course_id);
+  cur.forEach(async function (element) {
+    ++num;
+    await updateCourseCur(course_id, element.lecture, element.description);
+  });
+  await updateNumCur(course_id, num);
+  res.send({ message: "Course edit successfully" });
 });
 
 router.post("/class-create", async (req, res) => {

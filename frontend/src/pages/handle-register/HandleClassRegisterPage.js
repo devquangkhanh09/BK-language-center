@@ -39,6 +39,10 @@ const toDateFormat = (date) => {
   return date.split("T")[0];
 };
 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 //--------------------------------------------------
 
 export default function HandleClassRegisterPage() {
@@ -165,7 +169,7 @@ export default function HandleClassRegisterPage() {
 
                           <TableCell align="left">{student_name}</TableCell>
 
-                          <TableCell align="left">{cost}</TableCell>
+                          <TableCell align="left">{numberWithCommas(cost)}</TableCell>
 
                           <TableCell align="left">{toDateFormat(register_date)}</TableCell>
 
