@@ -111,17 +111,17 @@ exports.searchClassbyCourse = async function (course_name) {
   });
 };
 
-exports.createCourse = async function (
+exports.createCourse = async function ({
   id,
   name,
   type,
   requirement,
   target,
   cost
-) {
+}) {
   return new Promise((resolve, reject) => {
     var course_sql =
-      "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,0)";
+      "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`) VALUES (?,?,?,?,?,?)";
     dbconnect.query(
       course_sql,
       [id, name, type, requirement, target, cost],
@@ -136,7 +136,7 @@ exports.createCourse = async function (
   });
 };
 
-exports.createCourseCur = async function (id, lecture, description) {
+exports.createCourseCur = async function ({id, lecture, description}) {
   return new Promise((resolve, reject) => {
     var cur_sql =
       "INSERT INTO `course_curriculum` (`course_id`,`lecture`,`description`) VALUES (?,?,?)";
@@ -198,8 +198,8 @@ exports.updateCourseCur = async function (id, lecture, description) {
 
 exports.updateNumCur = async function (id, numCur) {
   return new Promise((resolve, reject) => {
-    var cur_sql = "UPDATE course SET numOfCurriculum = ? WHERE course_id = ?";
-    dbconnect.query(cur_sql, [id, numCur], (err, result, fields) => {
+    var cur_sql = "UPDATE course SET numOfLecture = ? WHERE course_id = ?";
+    dbconnect.query(cur_sql, [numCur, id], (err, result, fields) => {
       if (err) {
         reject(err);
       } else {

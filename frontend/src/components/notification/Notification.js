@@ -10,11 +10,12 @@ export default function CustomizedSnackbars({
     open,
     handleClose,
     status,
+    message
 }) {
   return (
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={status? "success": "error"}  sx={{ width: "100%" }}>
-          {status? 'Thao tác thành công!' : 'Thao tác thất bại!'}
+          {status? 'Thao tác thành công!' : `Thao tác thất bại! Lỗi: ${message}`}
         </Alert>
       </Snackbar>
   );

@@ -42,7 +42,7 @@ const initCourse = {
 };
 
 const initLesson = {
-  lecture: 0,
+  lecture: 1,
   description: "",
 };
 
@@ -111,13 +111,15 @@ export default function CourseCreatePage() {
           //to-do: handle success
           setActStatus(true);
           setOpenNoti(true);
+          resetForm();
         })
         .catch((error) => {
           //to-do: handle fail
+          if (error.response) setActMessage(error.response.data.message);
+          else setActMessage(error.message);
           setActStatus(false);
           setOpenNoti(true);
         });
-      resetForm();
     } else {
       //to-do: handle error
       setActStatus(false);
@@ -180,6 +182,7 @@ export default function CourseCreatePage() {
   const [openNoti, setOpenNoti] = useState(false);
 
   const [actStatus, setActStatus] = useState(false);
+  const [actMessage, setActMessage] = useState("");
 
   const handleCloseNoti = (event, reason) => {
     if (reason === "clickaway") {
@@ -440,6 +443,7 @@ export default function CourseCreatePage() {
         open={openNoti}
         handleClose={handleCloseNoti}
         status={actStatus}
+        message={actMessage}
       />
     </>
   );
