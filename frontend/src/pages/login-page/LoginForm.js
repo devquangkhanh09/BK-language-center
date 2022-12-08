@@ -126,7 +126,7 @@ export default function LoginForm() {
               error: true,
               helperText: errors.password,
             })}
-            type={showPassword ? "password" : "text"}
+            type={showPassword ? "text" : "password"}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

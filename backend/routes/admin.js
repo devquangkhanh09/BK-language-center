@@ -1,3 +1,4 @@
+const { ensureLoggedOut } = require("connect-ensure-login");
 var express = require("express");
 var router = express.Router();
 var { authorize } = require("../auth/auth");
@@ -90,29 +91,29 @@ router.put("/handle-register", async (req, res) => {
 });
 
 router.post("/course-create", async (req, res) => {
-  var course_id = req.body.id;
   var course_sql =
-    "INSERT INTO course(course_id,name,type,requirement,target,cost,numOfLecture) VALUES('" +
-    req.body.id +
-    "','" +
-    req.body.name +
-    "','" +
-    req.body.type +
-    "','" +
-    req.body.requirement +
-    "','" +
-    req.body.target +
-    "','" +
-    req.body.cost +
-    "','" +
-    req.body.numOfLecture +
-    "')";
-  dbconnect.query(course_sql, (err, result) => {
-    if (err) {
-      res.status(400);
-      console.log(err);
+    "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`) VALUES (?,?,?,?,?,?)";
+  var cur_sql =
+    "INSERT INTO `course_curriculum` (`course_id`,`lecture`,`description`) VALUES (?,?,?)";
+  var num = 0;
+  var course_id = req.body.id;
+  dbconnect.query(
+    course_sql,
+    [
+      req.body.id,
+      req.body.name,
+      req.body.type,
+      req.body.requirement,
+      req.body.target,
+      req.body.cost
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err.message);
+        res.status(400);
+      }
     }
-  });
+  );
   var cur = req.body.curriculum;
   cur.forEach((element) => {
     dbconnect.query(
@@ -244,14 +245,14 @@ router.post("/class-delete", async (req, res) => {
   res.send("Class deleted successfully");
 });
 
-router.get("/course-delete", async (req, res) => {
-  var course_sql = "CALL delete_course(??)";
+router.delete("/course-delete", async (req, res) => {
+  var course_sql = "CALL delete_course(?)";
   dbconnect.query(course_sql, [req.body.course_id], (err, result) => {
     if (err) {
       res.status(400);
     }
   });
-  res.send("Course deleted successfully");
+  res.send({message: "Course deleted successfully"});
 });
 
 module.exports = router;
