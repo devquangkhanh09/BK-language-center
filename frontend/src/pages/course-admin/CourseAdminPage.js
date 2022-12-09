@@ -24,6 +24,7 @@ import Iconify from "../../components/iconify";
 import Scrollbar from "../../components/scrollbar";
 import ConfirmPopup from "../../components/confirm-popup";
 import ListHead from "../../components/list-head";
+import Notification from "../../components/notification";
 
 const TABLE_HEAD = [
   { id: "course_id", label: "Mã khóa", align: "left" },
@@ -111,6 +112,41 @@ export default function CourseAdminPage() {
   //----------------------------------------
   
   const [courseID, setCourseID] = useState("");
+
+  const [openNoti, setOpenNoti] = useState(false);
+  const handleCloseNoti = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenNoti(false);
+  };
+
+  const [actStatus, setActStatus] = useState(false);
+  const [actMessage, setActMessage] = useState("");
+
+  const confirmAction = ({course_id}) => {
+    axios
+      .delete("/api/admin/course-delete", {
+        params: {
+          course_id
+        }
+      })
+      .then((res) => {
+        setOpenConfirm(false);
+        setCourseList(courseList.filter(course => {
+          return course.course_id !== course_id 
+        }));
+        setActStatus(true);
+        setOpenNoti(true);
+      })
+      .catch((error) => {
+        setOpenConfirm(false);
+        setActStatus(false);
+        if (error.response) setActMessage(error.response.data.message);
+        else setActMessage(error.message);
+        setOpenNoti(true);
+      });
+  }
 
   return (
     <>
@@ -218,6 +254,8 @@ export default function CourseAdminPage() {
         open={openConfirm}
         setOpen={setOpenConfirm}
         content="Bạn có chắc chắn muốn xóa khóa học này?"
+        confirmParams={{course_id: courseID}}
+        confirmAction={confirmAction}
       />
 
       <Popover
@@ -256,6 +294,13 @@ export default function CourseAdminPage() {
           Xóa
         </MenuItem>
       </Popover>
+
+      <Notification
+        open={openNoti}
+        handleClose={handleCloseNoti}
+        status={actStatus}
+        message={actMessage}
+      />
     </>
   );
 }

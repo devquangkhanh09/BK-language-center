@@ -211,12 +211,13 @@ router.post("/class-delete", async (req, res) => {
 
 router.delete("/course-delete", async (req, res) => {
   var course_sql = "CALL delete_course(?)";
-  dbconnect.query(course_sql, [req.body.course_id], (err, result) => {
+  dbconnect.query(course_sql, [req.query.course_id], (err, result) => {
     if (err) {
-      res.status(400);
+      return res.status(400).json({message: err.message});
+    } else {
+      return res.status(200).json({message: "Xoá khoá học thành công"});
     }
   });
-  res.send({message: "Course deleted successfully"});
 });
 
 module.exports = router;

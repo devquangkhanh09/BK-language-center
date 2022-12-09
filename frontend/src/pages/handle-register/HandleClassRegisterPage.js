@@ -20,8 +20,8 @@ import {
 // components
 import Scrollbar from "../../components/scrollbar";
 import ConfirmPopup from "../../components/confirm-popup";
-import Popup from "../../components/popup/Popup";
 import ListHead from "../../components/list-head";
+import Notification from "../../components/notification";
 
 const TABLE_HEAD = [
   { id: "course_id", label: "Mã khóa học", align: "left" },
@@ -75,8 +75,6 @@ export default function HandleClassRegisterPage() {
   //--------------------------------------
   const [openConfirm, setOpenConfirm] = useState(false);
   const [confirmParams, setConfirmParams] = useState({});
-  const [openPopup, setOpenPopup] = useState(false);
-  const [contentPopup, setContentPopup] = useState({title: '', message: ''});
 
   const handleOpenConfirm = (course_id, class_id, student_id) => {
     setConfirmParams({
@@ -86,6 +84,17 @@ export default function HandleClassRegisterPage() {
     });
     setOpenConfirm(true);
   };
+
+  const [openNoti, setOpenNoti] = useState(false);
+  const handleCloseNoti = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenNoti(false);
+  };
+
+  const [actStatus, setActStatus] = useState(false);
+  const [actMessage, setActMessage] = useState("");
 
   const confirmAction = ({course_id, class_id, student_id}) => {
     axios
@@ -100,13 +109,15 @@ export default function HandleClassRegisterPage() {
         setRegisterList(registerList.filter(register => {
           return register.course_id !== course_id || register.class_id !== class_id || register.student_id !== student_id
         }));
-        setContentPopup({title: "THÀNH CÔNG", message: res.data.message});
-        setOpenPopup(true);
+        setActStatus(true);
+        setOpenNoti(true);
       })
       .catch((error) => {
         setOpenConfirm(false);
-        setContentPopup({title: "THẤT BẠI", message: error.message});
-        setOpenPopup(true);
+        setActStatus(false);
+        if (error.response) setActMessage(error.response.data.message);
+        else setActMessage(error.message);
+        setOpenNoti(true);
       });
   }
 
@@ -218,11 +229,11 @@ export default function HandleClassRegisterPage() {
         confirmParams={confirmParams}
         confirmAction={confirmAction}
       />
-      <Popup 
-        title={contentPopup.title}
-        children={contentPopup.message}
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
+      <Notification
+        open={openNoti}
+        handleClose={handleCloseNoti}
+        status={actStatus}
+        message={actMessage}
       />
     </>
   );
