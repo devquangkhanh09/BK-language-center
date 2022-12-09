@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 //@mui
 import {
   Container,
@@ -14,53 +15,200 @@ import {
   Button,
   Paper,
   Pagination,
+  IconButton,
 } from "@mui/material";
 
 import Iconify from "../../components/iconify";
 import Popup from "../../components/popup";
+import Notification from "../../components/notification";
 
 import SaveAsOutlinedIcon from "@mui/icons-material/SaveAsOutlined";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
-const ITEM_PER_PAGE = 4;
-const MAX_PAGE = 4;
+const ITEM_PER_PAGE = 3;
+const MAX_PAGE = 5;
 
-const SYL = [
-  {
-    id: 1,
-    description: "Sentences and common errors when making sentences",
-  },
-  {
-    id: 2,
-    description: "Sentences",
-  },
-  {
-    id: 3,
-    description: "Sentences",
-  },
-  {
-    id: 4,
-    description: "Sentences",
-  },
-  {
-    id: 5,
-    description: "Sentences",
-  },
-];
+//-------------------------------------------------
+
+const initCourse = {
+  id: "",
+  name: "",
+  type: "",
+  requirement: "",
+  target: "",
+  cost: "",
+  numOfLecture: 0,
+};
+
+const initLesson = {
+  lecture: 1,
+  description: "",
+};
+
+//-------------------------------------------------
+
 export default function CourseEditPage() {
   const [notiPage, setNotiPage] = useState(0);
-  const [syllabus, setSyllabus] = useState(SYL);
   const [openPopup, setOpenPopup] = useState(false);
-  
+
   const navigate = useNavigate();
-  const handleSave = () => {
-    navigate("/app", { replace: true });
-  }
+  const navToCourse = () => {
+    navigate("/admin/courses", { replace: true });
+  };
+
+  //------------------------------------------------
+  const { id } = useParams();
+  const [courseInfo, setCourseInfo] = useState(initCourse);
+  const [error, setError] = useState(false);
+
+  const validateNotEmpty = (field = courseInfo) => {
+    var bool_exp =
+      field.id === "" ||
+      field.name === "" ||
+      field.type === "" ||
+      field.requirement === "" ||
+      field.target === "" ||
+      field.cost === "";
+    if (bool_exp) setError(true);
+    else setError(false);
+    return !bool_exp;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCourseInfo({
+      ...courseInfo,
+      [name]: value,
+    });
+    validateNotEmpty({ [name]: value });
+  };
+
+  const handleSubmitInfo = (e) => {
+    e.preventDefault();
+    if (validateNotEmpty()) {
+      const editCourse = {
+        id: courseInfo.id,
+        name: courseInfo.name,
+        type: courseInfo.type,
+        requirement: parseFloat(courseInfo.requirement),
+        target: parseFloat(courseInfo.target),
+        cost: parseFloat(courseInfo.cost),
+        numOfLecture: parseInt(curriculum.length),
+        curriculum: curriculum,
+      };
+      axios
+        .put("/api/admin/course-edit", editCourse)
+        .then((res) => {
+          //to-do: handle success
+          setActStatus(true);
+          setOpenNoti(true);
+        })
+        .catch((error) => {
+          //to-do: handle fail
+          if (error.response) setActMessage(error.response.data.message);
+          else setActMessage(error.message);
+          setActStatus(false);
+          setOpenNoti(true);
+        });
+    } else {
+      //to-do: handle error
+      setActStatus(false);
+      setOpenNoti(true);
+    }
+  };
+
+  //------------------------------------------------
+
+  const [lesson, setLesson] = useState(initLesson);
+  const [curriculum, setCurriculum] = useState([]);
+  const [lesError, setLesError] = useState(false);
+  const [dupError, setDupError] = useState(0);
+
+  const handleInputLesson = (e) => {
+    const { name, value } = e.target;
+    setLesson({
+      ...lesson,
+      [name]: value,
+    });
+  };
+
+  const resetLessonForm = () => {
+    setLesson({ ...initLesson, lecture: Number(lesson.lecture) + 1 });
+    setLesError(false);
+    setDupError(0);
+  };
+
+  const handleAddLesson = () => {
+    let i = 0;
+    for (; i < curriculum.length; i++)
+      if (curriculum[i].lecture === lesson.lecture) break;
+
+    if (
+      lesson.description !== "" &&
+      lesson.lecture !== 0 &&
+      i === curriculum.length
+    ) {
+      //to-do
+      var newLesson = { lecture: Number(lesson.lecture), description: lesson.description };
+      setCurriculum([...curriculum, newLesson]);
+      resetLessonForm();
+    } else {
+      if (lesson.description === "" || lesson.lecture === 0) setLesError(true);
+      if (i < curriculum.length) setDupError(lesson.lecture);
+    }
+  };
+
+  const handleDeleteLesson = (e, lecture) => {
+    e.preventDefault();
+    var new_list = curriculum.filter((item) => item.lecture !== lecture);
+    setCurriculum(new_list);
+  };
+
+  useEffect(() => {
+    axios
+      .get(`/api/admin/course/${id}`)
+      .then((res) => {
+        const course = res.data.course;
+        const courseCur = res.data.courseCur;
+        setCourseInfo({
+          id: course.course_id,
+          ...course
+        });
+
+        setCurriculum(courseCur.map(cur => ({lecture: cur.lecture, description: cur.description})));
+        setLesson({ lecture: courseInfo.numOfLecture + 1, description: "" });
+      })
+      .catch((error) => navigate("/", { replace: true }));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  //------------------------------------------------
+
+  const [openNoti, setOpenNoti] = useState(false);
+  const [actStatus, setActStatus] = useState(false);
+  const [actMessage, setActMessage] = useState("");
+
+  const handleCloseNoti = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenNoti(false);
+  };
+
+  //--------------------------------------------------
 
   return (
     <>
       <Container>
+        <Button
+          startIcon={<Iconify icon="material-symbols:arrow-back" />}
+          onClick={navToCourse}
+          sx={{ mb: 2 }}
+        >
+          Quay lại
+        </Button>
         <Typography variant="h4" gutterBottom>
-          Chỉnh sửa khóa học
+          Chỉnh sửa khóa học: {id}
         </Typography>
         <Box
           sx={{
@@ -77,27 +225,32 @@ export default function CourseEditPage() {
                 Thông tin khóa học
               </Typography>
               <TextField
+                disabled
                 margin="normal"
                 fullWidth
                 label="Mã khóa học"
-                name="course_id"
-                value=""
+                name="id"
+                value={courseInfo.id}
+                onChange={handleInputChange}
               />
               <TextField
                 margin="normal"
                 fullWidth
                 label="Tên khóa học"
                 name="name"
-                value=""
+                value={courseInfo.name}
+                onChange={handleInputChange}
               />
               <FormControl fullWidth margin="normal">
                 <InputLabel id="type-select-label">Loại khóa học</InputLabel>
                 <Select
                   labelId="type-select-label"
                   label="Loại khóa học"
-                  value=""
+                  name="type"
+                  value={courseInfo.type}
+                  onChange={handleInputChange}
                 >
-                  <MenuItem value="OVERRALL">OVERRALL</MenuItem>
+                  <MenuItem value="OVERALL">OVERALL</MenuItem>
                   <MenuItem value="LISTENING">LISTENING</MenuItem>
                   <MenuItem value="READING">READING</MenuItem>
                   <MenuItem value="SPEAKING">SPEAKING</MenuItem>
@@ -109,45 +262,57 @@ export default function CourseEditPage() {
                 fullWidth
                 label="Yêu cầu đầu vào"
                 name="requirement"
-                value=""
-                type="number"
+                value={courseInfo.requirement}
+                onChange={handleInputChange}
               />
               <TextField
                 margin="normal"
                 fullWidth
                 label="Mục tiêu đầu ra"
                 name="target"
-                value=""
-                type="number"
+                value={courseInfo.target}
+                onChange={handleInputChange}
               />
               <TextField
                 margin="normal"
                 fullWidth
                 label="Phí"
                 name="cost"
-                value=""
-                type="number"
+                value={courseInfo.cost}
+                onChange={handleInputChange}
               />
+              {error ? (
+                <Typography variant="body2" color="error">
+                  <em>Điền đầy đủ tất cả các trường.</em>
+                </Typography>
+              ) : null}
               <Button
-                sx={{ my: 3, height: 50, width: "100%" }}
                 variant="contained"
                 startIcon={<SaveAsOutlinedIcon />}
-                onClick={handleSave}
+                onClick={handleSubmitInfo}
+                sx={{ mt: 2 }}
               >
-                Lưu khóa học
+                Lưu thay đổi
               </Button>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                Chương trình học
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<Iconify icon="eva:plus-fill" />}
-                onClick={() => setOpenPopup(true)}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                Thêm buổi học
-              </Button>
+                <Typography variant="h6">Chương trình học</Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<Iconify icon="eva:plus-fill" />}
+                  onClick={() => setOpenPopup(true)}
+                >
+                  Thêm buổi học
+                </Button>
+              </Box>
               <Paper
                 elevation={3}
                 sx={{
@@ -155,7 +320,7 @@ export default function CourseEditPage() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  mt: 5,
+                  mt: 4,
                 }}
               >
                 <Typography
@@ -166,42 +331,51 @@ export default function CourseEditPage() {
                 >
                   Danh sách đã thêm
                 </Typography>
-                {syllabus
+                {curriculum
+                  .sort((a, b) => a.lecture - b.lecture)
                   .slice(
                     notiPage * ITEM_PER_PAGE,
                     notiPage * ITEM_PER_PAGE + ITEM_PER_PAGE
                   )
                   .map((item, idx) => {
-                    const { id, description } = item;
+                    const { lecture, description } = item;
                     return (
                       <Box
+                        key={idx}
                         sx={{
                           padding: 2,
-                          paddingBottom: 1,
                           display: "flex",
                           flexDirection: "column",
                           bgcolor: "#ebf1ff",
                           borderRadius: 3,
                           mb: 2,
                           width: "100%",
-                          gap: 1,
+                          gap: 0.5,
                         }}
                       >
-                        <Typography variant="subtitle1">
-                          <em>Buổi thứ {idx + 1}</em>
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                         
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 0.5,
+                            alignItems: "center",
+                          }}
                         >
+                          <IconButton
+                            color="error"
+                            size="small"
+                            onClick={(e) => handleDeleteLesson(e, lecture)}
+                          >
+                            <RemoveCircleOutlineIcon />
+                          </IconButton>
+
+                          <Typography variant="subtitle1">
+                            <em>Buổi thứ {lecture}</em>
+                          </Typography>
+                        </Box>
+                        <Typography variant="body1" sx={{ mx: 4.5 }}>
                           {description}
                         </Typography>
-                        <Button
-                          sx={{ mb: 1 }}
-                          color="error"
-                        >
-                          Xóa
-                        </Button>
                       </Box>
                     );
                   })}
@@ -215,6 +389,7 @@ export default function CourseEditPage() {
           </Grid>
         </Box>
       </Container>
+
       <Popup
         title="Thêm buổi học"
         openPopup={openPopup}
@@ -224,30 +399,57 @@ export default function CourseEditPage() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
+          <TextField
+            fullWidth
+            label="Thứ tự buổi"
+            name="lecture"
+            value={lesson.lecture}
+            onChange={handleInputLesson}
+            type="number"
+          />
           <TextField
             multiline
             rows={4}
             label="Mô tả"
             name="description"
-            value=""
+            value={lesson.description}
+            onChange={handleInputLesson}
             type="text"
             sx={{
               width: "100%",
-              mb: 2,
+              my: 2,
             }}
           />
+          {lesError ? (
+            <Typography gutterBottom variant="body2" color="error">
+              <em>Điền đầy đủ tất cả các trường.</em>
+            </Typography>
+          ) : null}
+          {dupError !== 0 ? (
+            <Typography gutterBottom variant="body2" color="error">
+              <em>Buổi {dupError} đã có trong chương trình học.</em>
+            </Typography>
+          ) : null}
           <Button
             sx={{ my: 1, height: 50, width: "30%" }}
             variant="contained"
             startIcon={<SaveAsOutlinedIcon />}
+            onClick={handleAddLesson}
           >
             Lưu lại
           </Button>
         </Box>
       </Popup>
+
+      <Notification
+        open={openNoti}
+        handleClose={handleCloseNoti}
+        status={actStatus}
+        message={actMessage}
+      />
     </>
   );
 }

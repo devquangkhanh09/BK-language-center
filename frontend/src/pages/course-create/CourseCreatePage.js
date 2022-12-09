@@ -112,6 +112,8 @@ export default function CourseCreatePage() {
           setActStatus(true);
           setOpenNoti(true);
           resetForm();
+          setLesson(initLesson);
+          setCurriculum([]);
         })
         .catch((error) => {
           //to-do: handle fail

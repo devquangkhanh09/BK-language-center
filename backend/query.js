@@ -154,19 +154,20 @@ exports.createCourseCur = async function ({id, lecture, description}) {
   });
 };
 
-exports.updateCourse = async function (
+exports.updateCourse = async function ({
   id,
   name,
   type,
   requirement,
   target,
-  cost
-) {
+  cost,
+  numOfLecture
+}) {
   return new Promise((resolve, reject) => {
     var course_sql = "CALL updateCourse (?,?,?,?,?,?,?)";
     dbconnect.query(
       course_sql,
-      [id, name, type, requirement, target, cost],
+      [id, name, type, requirement, target, cost, numOfLecture],
       (err, result, fields) => {
         if (err) {
           reject(err);
@@ -263,6 +264,32 @@ exports.teacherInfo = async function (teacher_id) {
         reject(err);
       } else {
         resolve(result[0]);
+      }
+    });
+  });
+};
+
+exports.getCourse = async (course_id) => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM course WHERE course_id = ?";
+    dbconnect.query(query, [course_id], (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+};
+
+exports.getCourseCur = async (course_id) => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM course_curriculum WHERE course_id = ?";
+    dbconnect.query(query, [course_id], (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
       }
     });
   });

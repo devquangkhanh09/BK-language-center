@@ -45,7 +45,7 @@ export default function Router() {
           element: <CourseCreatePage />,
         },
         {
-          path: "course-edit",
+          path: "course-edit/:id",
           element: <CourseEditPage />,
         },
         {

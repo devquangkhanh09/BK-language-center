@@ -100,25 +100,31 @@ router.post("/course-create", async (req, res) => {
   }
 });
 
-router.post("/course-edit", async (req, res) => {
-  await query.updateCourse(
-    req.body.id,
-    req.body.name,
-    req.body.type,
-    req.body.requirement,
-    req.body.target,
-    req.body.cost
-  );
-  var course_id = req.body.id;
-  var cur = req.body.curriculum;
-  var num = 0;
-  await query.deleteCur(course_id);
-  cur.forEach(async function (element) {
-    ++num;
-    await query.updateCourseCur(course_id, element.lecture, element.description);
-  });
-  await query.updateNumCur(course_id, num);
-  res.send({ message: "Course edit successfully" });
+router.get("/course/:id", async (req, res) => {
+  const course_id = req.params.id;
+  try {
+    const course = await query.getCourse(course_id);
+    const courseCur = await query.getCourseCur(course_id);
+    return res.status(200).json({course, courseCur});
+  } catch (error) {
+    return res.status(400).json({message: err.message});
+  }
+
+});
+
+router.put("/course-edit", async (req, res) => {
+  try {
+    await query.updateCourse(req.body);
+    await query.deleteCur(req.body.id);
+    const curriculum = req.body.curriculum;
+    curriculum.forEach(async (lec) => {
+      await query.createCourseCur({id: req.body.id, ...lec});
+    });
+
+    return res.status(200).json({message: "Chỉnh sửa khoá học thành công"});
+  } catch (error) {
+    return res.status(400).json({message: error.message});
+  }
 });
 
 router.post("/class-create", async (req, res) => {

@@ -53,8 +53,8 @@ export default function CourseAdminPage() {
     navigate("/admin/course-create", { replace: true });
   };
 
-  const navToEdit = () => {
-    navigate("/admin/course-edit", { replace: true });
+  const navToEdit = (id) => {
+    navigate(`/admin/course-edit/${id}`, { replace: true });
   };
 
   const navToClass = (id) => {
@@ -281,7 +281,7 @@ export default function CourseAdminPage() {
           Chương trình học
         </MenuItem>
 
-        <MenuItem onClick={navToEdit}>
+        <MenuItem onClick={() => navToEdit(courseID)}>
           <Iconify icon={"material-symbols:edit"} sx={{ mr: 2 }} />
           Chỉnh sửa
         </MenuItem>
