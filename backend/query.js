@@ -13,7 +13,7 @@ exports.getStatistics = async function (field) {
   });
 };
 
-exports.get_all_courses = async function () {
+exports.get_all_courses = async function () { 
   return new Promise((resolve, reject) => {
     course_query = "SELECT * FROM course";
     dbconnect.query(course_query, (err, result, fields) => {

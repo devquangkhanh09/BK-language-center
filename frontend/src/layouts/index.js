@@ -1,1 +1,2 @@
-export { default } from './AppLayout.js'
+export { AppLayout } from './AppLayout.js'
+export { StudentAppLayout } from "./StudentAppLayout.js"

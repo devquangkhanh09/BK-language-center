@@ -16,7 +16,7 @@ import AvaImg from '../../assets/avatar_default.jpg'
 
 // ----------------------------------------------------------------------
 
-export default function AccountPopover() {
+export default function AccountPopover({name}) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -61,7 +61,7 @@ export default function AccountPopover() {
             sx={{ width: 40, height: 40 }}
           />
           <Typography variant="subtitle1" sx={{ color: "text.primary" }}>
-            Admin
+            {name}
           </Typography>
         </Stack>
       </ButtonBase>
