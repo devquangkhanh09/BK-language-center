@@ -3,6 +3,7 @@ GET /api/student/course:
     res:
         [
             {
+                course_id
                 course_name
                 cost
                 requirement
@@ -37,7 +38,21 @@ GET /api/student/course-class:
                 schedule
                 form
                 status
+                numOfStudent
             }
         ]
+
+POST /api/student/register-class:
+    req: 
+        body:
+            {
+                course_id,
+                class_id,
+                student_id,
+            }
+    res:
+        status
+        body: 
+            message
             
         
