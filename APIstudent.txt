@@ -9,38 +9,48 @@ GET /api/student/course:
                 requirement
                 target
             }
-        }
+        ]
 GET /api/student/course-info:
     req:
-        course_id
+        query:
+            course_id
     res:
-        course_name
+        name
         numOfLecture
-        [
+        type
+        lectures: [
             {
                 lecture
                 description
             }
-        ]
-        form 
+        ] 
         numOfClass
-        target 
         requirement
+        target
+        cost
 
 GET /api/student/course-class:
     req:
-        course_id
+        query:
+            course_id
     res:
         [
             {
                 class_id
                 start_date
-                schedule
+                end_date
                 form
+                branch_id
+                room
+                time
+                teacher_name
                 status
                 numOfStudent
+                studentStatus*
             }
         ]
+
+*: 0, 1 (no available slot), 2 (waiting for confirmation), 3 (registered)
 
 POST /api/student/register-class:
     req: 
@@ -48,7 +58,6 @@ POST /api/student/register-class:
             {
                 course_id,
                 class_id,
-                student_id,
             }
     res:
         status

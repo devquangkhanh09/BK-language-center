@@ -14,6 +14,7 @@ import StudentAdminPage from "./pages/student-admin";
 import HandleClassRegisterPage from "./pages/handle-register";
 import Curriculum from "./pages/curriculum";
 import CourseStudentPage from "./pages/course-student";
+import ClassStudentPage from "./pages/class-student";
 
 const ProtectedRoute = ({ role, children }) => {
   
@@ -75,6 +76,10 @@ export default function Router() {
         {
           path: "courses",
           element: <CourseStudentPage />,
+        },
+        {
+          path: "classes",
+          element: <ClassStudentPage />,
         },
       ],
     },

@@ -109,6 +109,7 @@ CREATE TABLE `class` (
     `teacher_id` CHAR(9) NOT NULL,
     `status` VARCHAR(30),
     `numOfStudent` INT,
+    `maxStudent` INT DEFAULT 20,
     PRIMARY KEY (`course_id`, `class_id`),
     FOREIGN KEY (`course_id`) REFERENCES `course`(`course_id`),
     FOREIGN KEY (`branch_id`, `room`) REFERENCES `classroom`(`branch_id`, `room`),
@@ -118,7 +119,8 @@ CREATE TABLE `class` (
     CHECK (`start_date` < `end_date`),
     CHECK (`form` IN ('online', 'offline')),
     CHECK (`time` >= 1 AND `time` <= 6),
-    CHECK (`numOfStudent` >= 0)
+    CHECK (`numOfStudent` >= 0),
+    CHECK (`maxStudent` >= `numOfStudent`)
 );
 
 DROP TABLE IF EXISTS `course_curriculum`;
