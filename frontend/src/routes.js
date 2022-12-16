@@ -78,7 +78,7 @@ export default function Router() {
           element: <CourseStudentPage />,
         },
         {
-          path: "classes",
+          path: "classes/:id",
           element: <ClassStudentPage />,
         },
       ],

@@ -42,15 +42,17 @@ GET /api/student/course-class:
                 form
                 branch_id
                 room
-                time
+                time**
                 teacher_name
                 status
                 numOfStudent
+                maxStudent
                 studentStatus*
             }
         ]
 
 *: 0, 1 (no available slot), 2 (waiting for confirmation), 3 (registered)
+**: convert to readable schedule (ex: "Thứ 2, 4, 6 ; 19:00-21:00")
 
 POST /api/student/register-class:
     req: 
