@@ -12,7 +12,7 @@ const ensureLoggedIn = (req, res, next) => {
 };
 
 router.use(ensureLoggedIn);
-router.use(authorize("ADMIN"));
+router.use(authorize("admin"));
 
 // TO-DO: query from MySQL and render dashboard page
 

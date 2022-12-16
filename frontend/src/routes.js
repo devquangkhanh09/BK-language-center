@@ -12,7 +12,8 @@ import ClassAdminPage from "./pages/class-admin";
 import TeacherAdminPage from "./pages/teacher-admin";
 import StudentAdminPage from "./pages/student-admin";
 import HandleClassRegisterPage from "./pages/handle-register";
-import Curriculum from "./pages/curriculum"
+import Curriculum from "./pages/curriculum";
+import CourseStudentPage from "./pages/course-student";
 
 const ProtectedRoute = ({ role, children }) => {
   
@@ -30,7 +31,7 @@ export default function Router() {
     {
       path: "/admin",
       element: (
-        <ProtectedRoute role="ADMIN">
+        <ProtectedRoute role="admin">
           <AppLayout />
         </ProtectedRoute>
       ),
@@ -62,20 +63,36 @@ export default function Router() {
       ],
     },
     {
+      // TO-DO: fix layout of student
+      path: "/student",
+      element: (
+        <ProtectedRoute role="student">
+          <AppLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        { element: <Navigate to="/courses" />, index: true },
+        {
+          path: "courses",
+          element: <CourseStudentPage />,
+        },
+      ],
+    },
+    {
       path: "/",
       element: <StartPage />,
     },
     {
       path: "/login-admin",
-      element: <LoginPage />,
+      element: <LoginPage role="admin" />,
     },
     {
       path: "/login-teacher",
-      element: <LoginPage />,
+      element: <LoginPage role="teacher" />,
     },
     {
       path: "/login-student",
-      element: <LoginPage />,
+      element: <LoginPage role="student" />,
     },
     {
       path: "/register",

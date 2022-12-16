@@ -7,7 +7,7 @@ var query = require("../query");
 var ensureLoggedIn = ensureLogIn('/signin-student');
 
 router.use(ensureLoggedIn);
-router.use(authorize('STUDENT'));
+router.use(authorize('student'));
 
 // TO-DO: fix path (maybe?), create handlers for student path
 router.get('/course', (req, res) => {

@@ -24,7 +24,7 @@ const initialFValues = {
 
 // -------------------------------------------------------------------------
 
-export default function LoginForm() {
+export default function LoginForm({role}) {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -62,11 +62,14 @@ export default function LoginForm() {
     e.preventDefault();
     if (validateNotEmpty()) {
       axios
-        .post("/api/signin-admin", values)
+        .post(`/api/signin-${role}`, values)
         .then((res) => {
-           localStorage.setItem("isAuthenticated", true);
-           localStorage.setItem("role", res.data.role);
-           navigate("/admin/courses", { replace: true });
+          localStorage.setItem("isAuthenticated", true);
+          localStorage.setItem("role", res.data.role);
+          localStorage.setItem("name", res.data.name);
+          if (res.data.role === "admin") navigate("/admin/courses", { replace: true });
+          else if (res.data.role === "student") navigate("/student/courses", { replace: true });
+          else navigate("/teacher/courses", { replace: true });
         })
         .catch((error) => setSignInError(true));
       resetForm();

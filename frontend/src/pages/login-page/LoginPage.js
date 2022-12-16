@@ -25,11 +25,11 @@ const StyledPaper = styled(Paper)({
   width: 450,
 });
 
-export default function LoginPage() {
+export default function LoginPage({role}) {
   return (
     <StyledRoot>
       <StyledPaper>
-        <LoginForm />
+        <LoginForm role={role} />
       </StyledPaper>
     </StyledRoot>
   );

@@ -52,17 +52,29 @@ router.post('/signin-admin', passport.authenticate('local-admin', {
     } else return res.status(200).send(req.user);
 });
 
-router.post('/signin-teacher', passport.authenticate('local-teacher', {
-    successReturnToOrRedirect: '/teacher',
-    failureRedirect: '/signin-teacher',
-    failureMessage: true
-}));
-
 router.post('/signin-student', passport.authenticate('local-student', {
-    successReturnToOrRedirect: '/student',
-    failureRedirect: '/signin-student',
     failureMessage: true
-}));
+}), (req, res) => {
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).send("Unauthorized");
+    } else return res.status(200).send({
+        role: req.user.role,
+        id: req.user.id,
+        name: req.user.full_name
+    });
+});
+
+router.post('/signin-teacher', passport.authenticate('local-teacher', {
+    failureMessage: true
+}), (req, res) => {
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).send("Unauthorized");
+    } else return res.status(200).send({
+        role: req.user.role,
+        id: req.user.id,
+        name: req.user.full_name
+    });
+});
 
 router.post('/signout', function(req, res, next) {
     req.logout(function(err) {

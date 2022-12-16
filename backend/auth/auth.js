@@ -1,7 +1,7 @@
 var connection = require('../db').connection;
 
 async function authenticateAdmin(username, password) {
-    if (username == process.env.ADMIN_USERNAME && password == process.env.ADMIN_PASSWORD) return {id: "admin", role: "ADMIN"};
+    if (username == process.env.ADMIN_USERNAME && password == process.env.ADMIN_PASSWORD) return {id: "admin", role: "admin"};
     else return null; 
 }
 
@@ -12,7 +12,7 @@ async function authenticateTeacher(username, password) {
             if (err) reject(err);
             else if (result.length == 0) resolve(null);
             else resolve({
-                role: "TEACHER",
+                role: "teacher",
                 ...result[0]
             }); 
         })
@@ -26,7 +26,7 @@ async function authenticateStudent(username, password) {
             if (err) reject(err);
             else if (result.length == 0) resolve(null);
             else resolve({
-                role: "STUDENT",
+                role: "student",
                 ...result[0]
             }); 
         })
