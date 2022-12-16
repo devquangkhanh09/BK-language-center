@@ -1,0 +1,43 @@
+GET /api/student/course:
+    req:
+    res:
+        [
+            {
+                course_name
+                cost
+                requirement
+                target
+            }
+        }
+GET /api/student/course-info:
+    req:
+        course_id
+    res:
+        course_name
+        numOfLecture
+        [
+            {
+                lecture
+                description
+            }
+        ]
+        form 
+        numOfClass
+        target 
+        requirement
+
+GET /api/student/course-class:
+    req:
+        course_id
+    res:
+        [
+            {
+                class_id
+                start_date
+                schedule
+                form
+                status
+            }
+        ]
+            
+        

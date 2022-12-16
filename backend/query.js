@@ -294,3 +294,17 @@ exports.getCourseCur = async (course_id) => {
     });
   });
 };
+
+exports.ClassOfStudent = async function ClassOfStudent(student_id){
+  return new Promise((resolve, reject) => {
+    var query = "SELECT * FROM student_class WHERE student_id = ";
+    dbconnect.query(query, [student_id], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve(result);
+      }
+    });
+  });
+}
