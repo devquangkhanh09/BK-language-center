@@ -1,6 +1,6 @@
 import { Navigate, useRoutes } from "react-router-dom";
 
-import AppLayout from "./layouts";
+import { AppLayout, StudentAppLayout } from "./layouts";
 
 import StartPage from "./pages/start-page";
 import LoginPage from "./pages/login-page";
@@ -15,6 +15,7 @@ import HandleClassRegisterPage from "./pages/handle-register";
 import Curriculum from "./pages/curriculum";
 import CourseStudentPage from "./pages/course-student";
 import ClassStudentPage from "./pages/class-student";
+import CourseDetailPage from "./pages/course-detail";
 
 const ProtectedRoute = ({ role, children }) => {
   
@@ -68,7 +69,7 @@ export default function Router() {
       path: "/student",
       element: (
         <ProtectedRoute role="student">
-          <AppLayout />
+          <StudentAppLayout />
         </ProtectedRoute>
       ),
       children: [
@@ -80,6 +81,10 @@ export default function Router() {
         {
           path: "classes/:id",
           element: <ClassStudentPage />,
+        },
+        {
+          path: "course-detail/:id",
+          element: <CourseDetailPage />,
         },
       ],
     },

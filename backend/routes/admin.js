@@ -21,7 +21,7 @@ router.use(authorize("admin"));
 router.get("/courses", async (req, res) => {
   //-------STATISTICS
   var dashboard_data = {};
-  var stat = {};
+  var stat = {}; 
   stat.course = await query.getStatistics("course");
   stat.class = await query.getStatistics("class");
   stat.student = await query.getStatistics("student");

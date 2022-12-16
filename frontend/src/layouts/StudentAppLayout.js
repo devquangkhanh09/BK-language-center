@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 // @mui
 import { styled } from "@mui/material/styles";
 //
-import {Nav} from "./nav";
+import {StudentNav} from "./nav";
 import Header from "./header";
 
 // ----------------------------------------------------------------------
@@ -32,12 +32,13 @@ const Main = styled("div")(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export function AppLayout() {
+export function StudentAppLayout() {
   const [open, setOpen] = useState(false);
+  const name = localStorage.getItem("name");
   return (
     <StyledRoot>
-      <Header name="Admin" onOpenNav={() => setOpen(true)} />
-      <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+      <Header name={name} onOpenNav={() => setOpen(true)} />
+      <StudentNav openNav={open} onCloseNav={() => setOpen(false)} />
       <Main>
         <Outlet />
       </Main>
