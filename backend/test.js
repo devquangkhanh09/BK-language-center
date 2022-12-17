@@ -14,27 +14,32 @@ dbconnect.connect(function(err) {
       console.log(err);
     }
     else{
-      console.log('Database Connected');
+      doIt("FD-02");
     }
 });
 
-var a = 'a';
-var b =0;
-var course_sql =
-  "INSERT INTO course (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`numOfLecture`) VALUES (?,?,?,?,?,?,10)";
-  dbconnect.query(
-    course_sql,
-    [
-      a,
-      a,
-      a,
-      b,
-      b,
-      b
-    ],
-    (err, result) => {
+function searchClassbyCourseID (course_id) {
+  return new Promise((resolve, reject) => {
+    var class_query =
+      "SELECT * FROM class WHERE course_id = ?";
+      console.log(class_query);
+    dbconnect.query(class_query, [course_id], (err, result, fields) => {
       if (err) {
-        console.log(err);
+        reject(err);
+      } else {
+        resolve(result);
       }
-    }
-  );
+    });
+  });
+};
+
+async function doIt(id){
+  var classOfCourse = await searchClassbyCourseID(id);
+  //console.log(classOfCourse);
+    classOfCourse.forEach(element => {
+        console.log(element.class_id, element.start_date);
+  });
+}
+
+
+console.log(1);

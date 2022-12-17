@@ -308,3 +308,18 @@ exports.ClassOfStudent = async function ClassOfStudent(student_id){
     });
   });
 }
+
+exports.searchClassbyCourseID = async function (course_id) {
+  return new Promise((resolve, reject) => {
+    var class_query =
+      "SELECT * FROM class WHERE course_id = ?";
+      console.log(class_query);
+    dbconnect.query(class_query, [course_id], (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
