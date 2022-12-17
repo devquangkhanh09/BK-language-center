@@ -244,7 +244,7 @@ exports.studentInClass = async function (course_name, class_name) {
 exports.studentInfo = async function (student_id) {
   return new Promise((resolve, reject) => {
     var stu_query =
-      "SELECT (id,ssn,full_name,phone_number,email,address,level_overall,level_listening,level_reading,level_writing,level_speaking) FROM user INNER JOIN student ON user.id = student.id WHERE user.id = ??";
+      "SELECT (id,ssn,full_name,phone_number,email,address,level_overall,level_listening,level_reading,level_writing,level_speaking) FROM user INNER JOIN student ON user.id = student.id WHERE user.id = ?";
     dbconnect.query(stu_query, [student_id], (err, result, fields) => {
       if (err) {
         reject(err);
@@ -258,7 +258,7 @@ exports.studentInfo = async function (student_id) {
 exports.teacherInfo = async function (teacher_id) {
   return new Promise((resolve, reject) => {
     var tec_query =
-      "SELECT (id,ssn,full_name,phone_number,email,address,start_date,exp_year,level_overall,level_listening,level_reading,level_writing,level_speaking,type) FROM user INNER JOIN teacher ON user.id = teacher.id WHERE user.id = ??";
+      "SELECT * FROM user INNER JOIN teacher ON user.id = teacher.id WHERE user.id = ?";
     dbconnect.query(tec_query, [teacher_id], (err, result, fields) => {
       if (err) {
         reject(err);
@@ -313,7 +313,6 @@ exports.searchClassbyCourseID = async function (course_id) {
   return new Promise((resolve, reject) => {
     var class_query =
       "SELECT * FROM class WHERE course_id = ?";
-      console.log(class_query);
     dbconnect.query(class_query, [course_id], (err, result, fields) => {
       if (err) {
         reject(err);
@@ -322,4 +321,33 @@ exports.searchClassbyCourseID = async function (course_id) {
       }
     });
   });
+}
+
+exports.countCourseClass = async function countCourseClass(course_id) {
+  return new Promise((resolve, reject) => {
+    var sql = "SELECT COUNT(*) AS num FROM class WHERE course_id = ?";
+    dbconnect.query(sql, [course_id], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve(result);
+      }
+    }); 
+  });
 };
+
+exports.checkStudentInClass = async function checkStudentInClass(student_id, class_id, course_id){
+  return new Promise((resolve, reject) => {
+    var sql = "SELECT * FROM student_class WHERE student_id = ? AND class_id = ? AND course_id = ?";
+    dbconnect.query(sql, [student_id, class_id, course_id], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve(result);
+      }
+    });
+  });
+}
+

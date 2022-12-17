@@ -14,32 +14,28 @@ dbconnect.connect(function(err) {
       console.log(err);
     }
     else{
-      doIt("FD-02");
+      doIt("TC-010355");
     }
 });
 
-function searchClassbyCourseID (course_id) {
+async function teacherInfo (teacher_id) {
   return new Promise((resolve, reject) => {
-    var class_query =
-      "SELECT * FROM class WHERE course_id = ?";
-      console.log(class_query);
-    dbconnect.query(class_query, [course_id], (err, result, fields) => {
+    var tec_query =
+      "SELECT * FROM user INNER JOIN teacher ON user.id = teacher.id WHERE user.id = ?";
+    dbconnect.query(tec_query, [teacher_id], (err, result, fields) => {
       if (err) {
         reject(err);
       } else {
-        resolve(result);
+        resolve(result[0]);
       }
     });
   });
 };
 
 async function doIt(id){
-  var classOfCourse = await searchClassbyCourseID(id);
-  //console.log(classOfCourse);
-    classOfCourse.forEach(element => {
+  var classOfCourse = await teacherInfo(id);
+  console.log(classOfCourse.full_name);
+  /*  classOfCourse.forEach(element => {
         console.log(element.class_id, element.start_date);
-  });
+  });*/
 }
-
-
-console.log(1);
