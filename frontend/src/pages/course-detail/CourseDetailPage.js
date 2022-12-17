@@ -37,6 +37,10 @@ export default function CourseDetailPage() {
     navigate("/student/courses", { replace: true });
   };
 
+  const navToClass = () => {
+    navigate(`/student/classes/${id}`, {replace: true});
+  }
+
   //----------------------------------------------------
   const [curList, setCurList] = useState([]);
   const [courseName, setCourseName] = useState("");
@@ -181,6 +185,7 @@ export default function CourseDetailPage() {
                 color: "white",
                 backgroundColor: "#FF5607",
               }}
+              onClick={navToClass}
             >
               Đăng ký lớp
             </Button>

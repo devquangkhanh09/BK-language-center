@@ -9,41 +9,50 @@ GET /api/student/course:
                 requirement
                 target
             }
-        }
+        ]
 GET /api/student/course-info:
     req:
-        course_id
-    res:  
-        course_name
+        query:
+            course_id
+    res:
+        name
         numOfLecture
-        [
+        type
+        lectures: [
             {
                 lecture
                 description
             }
-        ]
-        form 
+        ] 
         numOfClass
-        target 
         requirement
+        target
+        cost
 
-GET /api/student/course-class:
+GET /api/student/classes/:id:
     req:
-        course_id
     res:
         [
             {
                 class_id
                 start_date
-                schedule
+                end_date
                 form
+                branch_id
+                room
+                time**
+                teacher_name
                 status
                 numOfStudent
+                maxStudent
+                studentStatus*
             }
         ]
 
+*: 0, 1 (no available slot), 2 (waiting for confirmation), 3 (registered)
+**: convert to readable schedule (ex: "Thứ 2, 4, 6 ; 19:00-21:00")
+
 POST /api/student/register-class:
-    req.user.id
     req: 
         body:
             {

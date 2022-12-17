@@ -3,7 +3,7 @@ var router = express.Router();
 var ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
 var {authorize} = require('../auth/auth');
 var query = require("../query");
-const e = require('express');
+var dbconnect = require("../db").connection;
 
 var ensureLoggedIn = ensureLogIn('/signin-student');
 
@@ -22,8 +22,7 @@ router.get("/courses", async (req, res) => {
             requirement: course.requirement,
             target: course.target
         });
-    })
-    console.log(result);
+    });
   res.json(result);
 });
 
@@ -55,11 +54,12 @@ router.get("/curriculums", async (req, res) => {
   res.json(all_curriculum);
 });
 
-router.get("/course-class", async (req, res) => {
-    var id = "FD-02" //req.query.course_id;
+router.get("/classes/:id", async (req, res) => {
+    var id = req.params.id;
     var classOfCourse = await query.searchClassbyCourseID(id);
     var result = [];
-    classOfCourse.forEach(async function (element) {
+    for (var idx = 0; idx < classOfCourse.length; idx++) {
+        var element = classOfCourse[idx];
         var schedule = element.time;
         var sched = "";
         if (schedule === 1){
@@ -78,8 +78,8 @@ router.get("/course-class", async (req, res) => {
         var std_status;
         var checkStdClass = await query.checkStudentInClass(req.user.id, element.class_id, id);
         if (checkStdClass.length === 0) {
-            if (element.numOfStudent === 30) std_status = 0;
-            else std_status = 1;
+            if (element.numOfStudent === element.maxStudent) std_status = 1;
+            else std_status = 0;
         }
         else {
             if (checkStdClass[0].status === "paid") std_status = 3;
@@ -88,8 +88,8 @@ router.get("/course-class", async (req, res) => {
         
         var ele = {
             class_id: element.class_id,
-            start_date: element.start_date,
-            end_date: element.end_date,
+            start_date: element.start_date.toISOString().slice(0,10),
+            end_date: element.end_date.toISOString().slice(0,10),
             form: element.form,
             branch_id: element.branch_id,
             room: element.room,
@@ -97,19 +97,20 @@ router.get("/course-class", async (req, res) => {
             teacher_name: (await query.teacherInfo(element.teacher_id)).full_name,
             status: element.status,
             numOfStudent: element.numOfStudent,
-            maxStudent: 20,
+            maxStudent: element.maxStudent,
             studentStatus: std_status,
         }
         result.push(ele);
-    });
+    };
     res.json(result);
 });
- 
-router.post("register-class", async (req, res) => {
+
+router.post("/register-class", async (req, res) => {
     var sql = "CALL add_student_class(?,?,?)";
-    dbconnect.query(sql, [req.user.id, req.body.course_id, req.body.class_id], (err, result) => {
+    console.log(req.body);
+    dbconnect.query(sql, [req.body.course_id, req.body.class_id, req.user.id], (err, result) => {
         if(err) {
-            res.status(400).send({message: err});
+            res.status(400).send({message: err.message});
         }
         else {
             res.status(200).send({message: "Register class successfully"});
