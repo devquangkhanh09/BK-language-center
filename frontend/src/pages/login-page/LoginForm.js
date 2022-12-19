@@ -60,7 +60,7 @@ export default function LoginForm({role}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateNotEmpty()) {
+    if (validateNotEmpty()) { 
       axios
         .post(`/api/signin-${role}`, values)
         .then((res) => {
@@ -69,7 +69,7 @@ export default function LoginForm({role}) {
           localStorage.setItem("name", res.data.name);
           if (res.data.role === "admin") navigate("/admin/courses", { replace: true });
           else if (res.data.role === "student") navigate("/student/courses", { replace: true });
-          else navigate("/teacher/courses", { replace: true });
+          else navigate("/teacher/classes", { replace: true });
         })
         .catch((error) => setSignInError(true));
       resetForm();

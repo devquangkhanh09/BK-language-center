@@ -17,6 +17,8 @@ import CourseStudentPage from "./pages/course-student";
 import ClassStudentPage from "./pages/class-student";
 import CourseDetailPage from "./pages/course-detail";
 
+import ClassTeacherPage from "./pages/class-teacher";
+
 const ProtectedRoute = ({ role, children }) => {
   
   if (!localStorage.getItem("isAuthenticated") || localStorage.getItem("role") !== role) {
@@ -85,6 +87,21 @@ export default function Router() {
         {
           path: "course-detail/:id",
           element: <CourseDetailPage />,
+        },
+      ],
+    },
+    {
+      path: "/teacher",
+      element: (
+        <ProtectedRoute role="teacher">
+          <StudentAppLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        { element: <Navigate to="/classes" />, index: true },
+        {
+          path: "classes",
+          element: <ClassTeacherPage />,
         },
       ],
     },

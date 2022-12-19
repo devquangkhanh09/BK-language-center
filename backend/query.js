@@ -54,6 +54,20 @@ exports.get_all_class = async function () {
   });
 };
 
+exports.get_all_student_class = async function () {
+  return new Promise((resolve, reject) => {
+    student_class_query = "SELECT * FROM student_class";
+    dbconnect.query(student_class_query, (err, result, fields) => {
+      if (err) {
+        reject(err);
+        console.log(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 exports.get_all_teacher = async function () {
   return new Promise((resolve, reject) => {
     class_query = "SELECT * FROM teacher";

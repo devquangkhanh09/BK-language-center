@@ -6,7 +6,7 @@ import {
   Button,
   Typography,
   Grid,
-  Container
+  Container,
 } from "@mui/material";
 import Iconify from "../../components/iconify";
 import { useEffect, useState } from "react";
@@ -75,7 +75,7 @@ const testClassList = [
     maxStudent: 20,
     studentStatus: 3,
   },
-]
+];
 
 // NOTE: not yet complete, testing purpose only
 export default function ClassStudentPage() {
@@ -92,10 +92,11 @@ export default function ClassStudentPage() {
       .get(`/api/student/classes/${id}`)
       .then((res) => {
         var myList = res.data;
+        console.log(myList);
         setClassList(myList);
       })
-      .catch((error) => navigate('/', {replace: true}));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      .catch((error) => navigate("/", { replace: true }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   //-----------------------------------------------------
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -104,7 +105,7 @@ export default function ClassStudentPage() {
   const handleOpenConfirm = (class_id) => {
     setConfirmParams({
       course_id: id,
-      class_id
+      class_id,
     });
     setOpenConfirm(true);
   };
@@ -124,18 +125,20 @@ export default function ClassStudentPage() {
     axios
       .post("/api/student/register-class", {
         course_id,
-        class_id
+        class_id,
       })
       .then((res) => {
         setOpenConfirm(false);
-        setClassList(classList.map(_class => {
-          if (_class.class_id === class_id) {
-            _class.numOfStudent++;
-            _class.studentStatus = 2;
+        setClassList(
+          classList.map((_class) => {
+            if (_class.class_id === class_id) {
+              _class.numOfStudent++;
+              _class.studentStatus = 2;
+              return _class;
+            }
             return _class;
-          }
-          return _class;
-        }));
+          })
+        );
         setActStatus(true);
         setOpenNoti(true);
       })
@@ -147,13 +150,12 @@ export default function ClassStudentPage() {
         else setActMessage(error.message);
         setOpenNoti(true);
       });
-  }
+  };
   //-----------------------------------------------------
 
   return (
     <>
       <Container>
-
         <Button
           startIcon={<Iconify icon="material-symbols:arrow-back" />}
           onClick={navToCourse}
@@ -166,87 +168,100 @@ export default function ClassStudentPage() {
         </Typography>
 
         <Grid container spacing={2}>
-          {classList
-            .map((_class, idx) => {
-              const {
-                class_id,
-                start_date,
-                end_date,
-                form,
-                branch_id,
-                room,
-                time,
-                teacher_name,
-                numOfStudent,
-                maxStudent,
-                studentStatus } = _class;
+          {classList.map((_class, idx) => {
+            const {
+              class_id,
+              start_date,
+              end_date,
+              form,
+              branch_id,
+              room,
+              time,
+              teacher_name,
+              numOfStudent,
+              maxStudent,
+              studentStatus,
+            } = _class;
 
-              return (
-                <Grid item xs={6} key={idx}>
-                  <Card sx={{ minWidth: 275, height: "100%" }}>
-
-                    <CardHeader
-                      action={
-                        <Typography variant="h5" color={numOfStudent === maxStudent ? "red" : "green"}>
-                          {numOfStudent} / {maxStudent}
-                        </Typography>
-                      }
-                      title={
-                        <Typography variant="h3" color="blue">
-                          {class_id}
-                        </Typography>
-                      }
-                      subheader={
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ fontStyle: "italic" }}
-                          color={
-                            (studentStatus === 1) ? "red" : (studentStatus === 2) ? "gray" : "green"
-                          }
-                        >
-                          {
-                            (studentStatus === 1) ? "Đã đạt số lượng đăng ký tối đa" : (studentStatus === 2) ? "Đang đợi xác nhận..." : (studentStatus === 3) ? "Xác nhận đăng ký thành công" : <br />
-                          }
-                        </Typography>
-                      }
-                    />
-
-                    <CardContent>
-                      <Typography variant="body2">
-
-                        <b>Ngày bắt đầu:</b> {start_date}
-                        <br />
-                        <b>Ngày kết thúc:</b> {end_date}
-                        <br />
-                        <b>Hình thức:</b> {form}
-                        <br />
-                        <b>Chi nhánh:</b> {branch_id}
-                        <br />
-                        <b>Phòng:</b> {room}
-                        <br />
-                        <b>Thời gian học:</b> {time}
-                        <br />
-                        <b>Giảng viên:</b> {teacher_name}
-
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        variant="outlined"
-                        sx={{ fontSize: "13px", borderRadius: 30, margin: "0 auto 15px" }}
-                        startIcon={<Iconify icon="eva:plus-fill" />}
-                        disabled={(studentStatus === 0) ? false : true}
-                        onClick={() => handleOpenConfirm(class_id)}
+            return (
+              <Grid item xs={6} key={idx}>
+                <Card sx={{ minWidth: 275, height: "100%" }}>
+                  <CardHeader
+                    action={
+                      <Typography
+                        variant="h5"
+                        color={numOfStudent === maxStudent ? "red" : "green"}
                       >
-                        Đăng ký lớp học
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              );
-            })}
-        </Grid>
+                        {numOfStudent} / {maxStudent}
+                      </Typography>
+                    }
+                    title={
+                      <Typography variant="h3" color="blue">
+                        {class_id}
+                      </Typography>
+                    }
+                    subheader={
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontStyle: "italic" }}
+                        color={
+                          studentStatus === 1
+                            ? "red"
+                            : studentStatus === 2
+                            ? "gray"
+                            : "green"
+                        }
+                      >
+                        {studentStatus === 1 ? (
+                          "Đã đạt số lượng đăng ký tối đa"
+                        ) : studentStatus === 2 ? (
+                          "Đang đợi xác nhận..."
+                        ) : studentStatus === 3 ? (
+                          "Xác nhận đăng ký thành công"
+                        ) : (
+                          <br />
+                        )}
+                      </Typography>
+                    }
+                  />
 
+                  <CardContent>
+                    <Typography variant="body2">
+                      <b>Ngày bắt đầu:</b> {start_date}
+                      <br />
+                      <b>Ngày kết thúc:</b> {end_date}
+                      <br />
+                      <b>Hình thức:</b> {form}
+                      <br />
+                      <b>Chi nhánh:</b> {branch_id}
+                      <br />
+                      <b>Phòng:</b> {room}
+                      <br />
+                      <b>Thời gian học:</b> {time}
+                      <br />
+                      <b>Giảng viên:</b> {teacher_name}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        fontSize: "13px",
+                        borderRadius: 30,
+                        margin: "0 auto 15px",
+                      }}
+                      startIcon={<Iconify icon="eva:plus-fill" />}
+                      disabled={studentStatus === 0 ? false : true}
+                      onClick={() => handleOpenConfirm(class_id)}
+                    >
+                      Đăng ký lớp học
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
       </Container>
 
       <ConfirmPopup

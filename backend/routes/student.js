@@ -10,16 +10,17 @@ var ensureLoggedIn = ensureLogIn('/signin-student');
 router.use(ensureLoggedIn);
 router.use(authorize('student'));
 
-// TO-DO: fix path (maybe?), create handlers for student path
+// TO-DO: fix path (maybe?), create handlers for student path 
 router.get("/courses", async (req, res) => {
   var all_courses = await query.get_all_courses();
   var result = [];
     all_courses.forEach(course => {
         result.push({
             course_id: course.course_id,
-            course_name: course.name,
+            name: course.name,
             cost: course.cost,
             requirement: course.requirement,
+            type: course.type,
             target: course.target
         });
     });
@@ -61,7 +62,7 @@ router.get("/classes/:id", async (req, res) => {
     for (var idx = 0; idx < classOfCourse.length; idx++) {
         var element = classOfCourse[idx];
         var schedule = element.time;
-        var sched = "";
+        var sched = ""; 
         if (schedule === 1){
             sched = "Thứ 2, 4, 6: 17h30 - 19:00";
         }
@@ -102,6 +103,7 @@ router.get("/classes/:id", async (req, res) => {
         }
         result.push(ele);
     };
+    console.log(result)
     res.json(result);
 });
 
