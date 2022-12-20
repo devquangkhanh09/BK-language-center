@@ -154,11 +154,11 @@ router.post("/class-create", async (req, res) => {
     "')";
   dbconnect.query(course_sql, (err, result) => {
     if (err) {
-      console.log(err);
-      res.status(400);
+      res.status(400).json({message: err.message});
+    } else {
+      res.json({message: "Tạo lớp học thành công"});
     }
   });
-  res.send("Course edit successfully");
 });
 
 router.post("/class-edit", async (req, res) => {
@@ -191,11 +191,11 @@ router.post("/class-edit", async (req, res) => {
     "'";
   dbconnect.query(class_sql, (err, result) => {
     if (err) {
-      console.log(err);
-      res.status(400);
+      res.status(400).json({message: err.message});
+    } else {
+      res.json({message: "Chỉnh sửa lớp học thành công"});
     }
   });
-  res.send("Class edit successfully");
 });
 
 router.post("/class-delete", async (req, res) => {
@@ -208,11 +208,11 @@ router.post("/class-delete", async (req, res) => {
     "')";
   dbconnect.query(class_sql, (err, result) => {
     if (err) {
-      res.status(400);
-      console.log(err);
+      res.status(400).json({message: err.message});
+    } else {
+      res.json({message: "Tạo lớp học thành công"});
     }
   });
-  res.send("Class deleted successfully");
 });
 
 router.delete("/course-delete", async (req, res) => {

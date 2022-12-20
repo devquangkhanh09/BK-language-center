@@ -44,6 +44,7 @@ router.get("/classes", async (req, res) => {
     }
 
     var ele = {
+      course_id: element.course_id,
       class_id: element.class_id,
       start_date: element.start_date.toISOString().slice(0, 10),
       end_date: element.end_date.toISOString().slice(0, 10),

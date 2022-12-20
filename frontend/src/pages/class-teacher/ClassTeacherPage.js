@@ -27,7 +27,6 @@ import Iconify from "../../components/iconify";
 import { useEffect, useState, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ConfirmPopup from "../../components/confirm-popup";
 import Notification from "../../components/notification";
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -137,6 +136,7 @@ export default function ClassTeacherPage() {
         <Grid container spacing={4}>
           {classList.map((_class, idx) => {
             const {
+              course_id,
               class_id,
               start_date,
               end_date,
@@ -154,7 +154,7 @@ export default function ClassTeacherPage() {
                   <CardHeader
                     title={
                       <Typography variant="h3" color="blue">
-                        {class_id}
+                        Lớp học {class_id} (Khoá học {course_id})
                       </Typography>
                     }
                     subheader={

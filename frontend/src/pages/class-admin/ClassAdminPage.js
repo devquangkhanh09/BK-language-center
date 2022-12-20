@@ -86,6 +86,7 @@ export default function ClassAdminPage() {
         setClassList(myList);
       })
       .catch((error) => console.log(error));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //--------------------------------------
@@ -147,13 +148,15 @@ export default function ClassAdminPage() {
         setOpenNoti(true);
         // insert in front-end
         setClassList([newClass, ...classList]);
+        resetForm();
       })
       .catch((error) => {
         //to-do: handle fail
+        if (error.response) setActMessage(error.response.data.message);
+        else setActMessage(error.message);
         setActStatus(false);
         setOpenNoti(true);
       });
-    resetForm();
   };
 
   //----------------------------------------
@@ -161,6 +164,7 @@ export default function ClassAdminPage() {
   const [openNoti, setOpenNoti] = useState(false);
 
   const [actStatus, setActStatus] = useState(false);
+  const [actMessage, setActMessage] = useState("");
 
   const handleCloseNoti = (event, reason) => {
     if (reason === "clickaway") {
@@ -189,6 +193,8 @@ export default function ClassAdminPage() {
         setClassList(newClassList);
       })
       .catch((error) => {
+        if (error.response) setActMessage(error.response.data.message);
+        else setActMessage(error.message);
         setActStatus(false);
         setOpenNoti(true);
       });
@@ -229,6 +235,8 @@ export default function ClassAdminPage() {
       })
       .catch((error) => {
         //to-do: handle fail
+        if (error.response) setActMessage(error.response.data.message);
+        else setActMessage(error.message);
         setActStatus(false);
         setOpenNoti(true);
       });
@@ -649,6 +657,7 @@ export default function ClassAdminPage() {
         open={openNoti}
         handleClose={handleCloseNoti}
         status={actStatus}
+        message={actMessage}
       />
     </>
   );

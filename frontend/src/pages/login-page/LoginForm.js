@@ -67,7 +67,7 @@ export default function LoginForm({role}) {
           localStorage.setItem("isAuthenticated", true);
           localStorage.setItem("role", res.data.role);
           localStorage.setItem("name", res.data.name);
-          if (res.data.role === "admin") navigate("/admin/courses", { replace: true });
+          if (res.data.role === "admin") navigate("/admin/overview", { replace: true });
           else if (res.data.role === "student") navigate("/student/courses", { replace: true });
           else navigate("/teacher/classes", { replace: true });
         })
