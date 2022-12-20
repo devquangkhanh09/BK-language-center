@@ -5,6 +5,7 @@ import { AppLayout, StudentAppLayout } from "./layouts";
 import StartPage from "./pages/start-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
+import OverviewAdminPage from "./pages/overview-admin";
 import CourseAdminPage from "./pages/course-admin";
 import CourseCreatePage from "./pages/course-create";
 import CourseEditPage from "./pages/course-edit";
@@ -41,6 +42,10 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to="/courses" />, index: true },
+        {
+          path: "overview",
+          element: <OverviewAdminPage/>,
+        },
         {
           path: "courses",
           element: <CourseAdminPage />,
