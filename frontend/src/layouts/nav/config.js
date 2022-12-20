@@ -1,5 +1,9 @@
 export const navConfig = [
   {
+    title: "Tổng quan",
+    path: "/admin/overview",
+  },
+  {
     title: "Quản lý khóa học",
     path: "/admin/courses",
   },
