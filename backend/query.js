@@ -380,3 +380,40 @@ exports.checkStudentInClass = async function checkStudentInClass(student_id, cla
   });
 }
 
+exports.enterGrade = async ({
+  course_id, 
+  class_id,
+  student_id,
+  grade_listening,
+  grade_reading,
+  grade_writing,
+  grade_speaking
+}) => {
+  return new Promise((resolve, reject) => {
+    var sql = `
+      UPDATE student_class 
+      SET grade_overall=calculate_overall(?,?,?,?), grade_listening=?, grade_reading=?, grade_writing=?, grade_speaking=? 
+      WHERE course_id=? AND class_id=? AND student_id=?`;
+    dbconnect.query(sql, [
+      grade_listening,
+      grade_reading,
+      grade_writing,
+      grade_speaking,
+      grade_listening,
+      grade_reading,
+      grade_writing,
+      grade_speaking,
+      course_id, 
+      class_id,
+      student_id,
+    ], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve(result);
+      }
+    }); 
+  });
+}
+

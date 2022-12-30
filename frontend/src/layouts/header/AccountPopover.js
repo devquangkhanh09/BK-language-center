@@ -87,10 +87,7 @@ export default function AccountPopover({name}) {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Admin
-          </Typography>
-          <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            @admin
+            {name}
           </Typography>
         </Box>
 

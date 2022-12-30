@@ -44,7 +44,6 @@ export default function ClassTeacherPage() {
       .then((res) => {
         let tmp_name = localStorage.getItem("name");
         var myList = res.data.filter((item) => item.teacher_name === tmp_name);
-        //console.log(myList);
         setClassList(myList);
       })
       .catch((error) => navigate("/", { replace: true }));
@@ -57,7 +56,6 @@ export default function ClassTeacherPage() {
       .get(`/api/teacher/student-class`)
       .then((res) => {
         var myList = res.data.filter((item) => item.class_id === class_id);
-        console.log(myList);
         setStudentClassList(myList);
         setOpen(true);
       })
@@ -107,7 +105,6 @@ export default function ClassTeacherPage() {
       tmp_list[idx].grade_speaking = Number(value);
     }
     setStudentClassList(tmp_list);
-    console.log(studentClassList);
   };
 
   //-----------------------------------------------------
@@ -241,36 +238,37 @@ export default function ClassTeacherPage() {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>ID học viên</TableCell>
-                <TableCell align="center">Overall</TableCell>
-                <TableCell align="center">Reading</TableCell>
-                <TableCell align="center">Listening</TableCell>
-                <TableCell align="center">Writing</TableCell>
-                <TableCell align="center">Speaking</TableCell>
+                <TableCell key="id">ID học viên</TableCell>
+                <TableCell align="center" key="overall">Overall</TableCell>
+                <TableCell align="center" key="reading">Reading</TableCell>
+                <TableCell align="center" key="listening">Listening</TableCell>
+                <TableCell align="center" key="writing">Writing</TableCell>
+                <TableCell align="center" key="speaking">Speaking</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {studentClassList.map((row) => (
                 <TableRow
-                  key={row.name}
+                  key={row.student_id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" scope="row" key="id">
                     {row.student_id}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" key="overall">
                     {" "}
                     <TextField
                       type="number"
                       value={row.grade_overall}
                       name="overall"
+                      disabled
                       sx={{
                         width: 70,
                       }}
                       onChange={(e) => handleInputChange(e, row.student_id)}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" key="reading">
                     {" "}
                     <TextField
                       type="number"
@@ -282,7 +280,7 @@ export default function ClassTeacherPage() {
                       onChange={(e) => handleInputChange(e, row.student_id)}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" key="listening">
                     {" "}
                     <TextField
                       type="number"
@@ -294,7 +292,7 @@ export default function ClassTeacherPage() {
                       onChange={(e) => handleInputChange(e, row.student_id)}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" key="writing">
                     {" "}
                     <TextField
                       type="number"
@@ -306,7 +304,7 @@ export default function ClassTeacherPage() {
                       onChange={(e) => handleInputChange(e, row.student_id)}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" key="speaking">
                     {" "}
                     <TextField
                       type="number"

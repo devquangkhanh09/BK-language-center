@@ -9,17 +9,20 @@ CREATE
         course_id = NEW.course_id
             AND class_id = NEW.class_id;
 
-DROP TRIGGER IF EXISTS `updateLevelStudent`;
-CREATE 
-    TRIGGER  updateLevelStudent
- AFTER UPDATE ON student_class FOR EACH ROW 
-    UPDATE student SET level_overall = NEW.grade_overall , level_listening = NEW.grade_listening , level_reading = NEW.grade_reading , level_writing = NEW.grade_writing , level_speaking = NEW.grade_speaking WHERE
-        id = NEW.student_id;
+DELIMITER $$
+DROP TRIGGER IF EXISTS `updateLevelStudent`$$
+CREATE TRIGGER  updateLevelStudent
+AFTER UPDATE ON student_class FOR EACH ROW 
+BEGIN
+    UPDATE student 
+    SET level_overall = calculate_overall(NEW.grade_listening, NEW.grade_reading, NEW.grade_writing, NEW.grade_speaking) , level_listening = NEW.grade_listening , level_reading = NEW.grade_reading , level_writing = NEW.grade_writing , level_speaking = NEW.grade_speaking 
+    WHERE id = NEW.student_id;
+END $$
 
 DELIMITER $$
 DROP TRIGGER IF EXISTS `addAttendance`$$
 CREATE TRIGGER addAttendance
-    AFTER UPDATE ON student_class
+    AFTER INSERT ON student_class
     FOR EACH ROW
     BEGIN
 		DECLARE a INT Default 1;

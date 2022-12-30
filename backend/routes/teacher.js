@@ -67,35 +67,11 @@ router.get("/student-class", async (req, res) => {
   res.json(all_student_class);
 });
 
-router.put("/enter-grade", (req, res) => {
+router.put("/enter-grade", async (req, res) => {
   try {
     var updateList = req.body;
     for (var i = 0; i < updateList.length; i++) {
-     let grade_sql =
-       "UPDATE student_class SET " +
-       "grade_overall = '" +
-       updateList[i].grade_overall +
-       "'," +
-       "grade_listening = '" +
-       updateList[i].grade_listening +
-       "'," +
-       "grade_reading = '" +
-       updateList[i].grade_reading +
-       "'," +
-       "grade_writing = '" +
-       updateList[i].grade_writing +
-       "'," +
-       "grade_speaking = '" +
-       updateList[i].grade_speaking +
-       "' WHERE student_id = '" +
-       updateList[i].student_id +
-       "'";
-      dbconnect.query(grade_sql, (err, result) => {
-        if (err) {
-          console.log(err);
-          res.status(400);
-        }
-      });
+      await query.enterGrade(updateList[i]);
     }
     return res.status(200).json({ message: "Nhập điểm thành công" });
   } catch (error) {
