@@ -131,14 +131,15 @@ exports.createCourse = async function ({
   type,
   requirement,
   target,
-  cost
+  cost,
+  teacher_requirement
 }) {
   return new Promise((resolve, reject) => {
     var course_sql =
-      "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`) VALUES (?,?,?,?,?,?)";
+      "INSERT INTO `course` (`course_id`,`name`,`type`,`requirement`,`target`,`cost`,`teacher_requirement`) VALUES (?,?,?,?,?,?,?)";
     dbconnect.query(
       course_sql,
-      [id, name, type, requirement, target, cost],
+      [id, name, type, requirement, target, cost, teacher_requirement],
       (err, result, fields) => {
         if (err) {
           reject(err);
@@ -175,13 +176,14 @@ exports.updateCourse = async function ({
   requirement,
   target,
   cost,
+  teacher_requirement,
   numOfLecture
 }) {
   return new Promise((resolve, reject) => {
-    var course_sql = "CALL updateCourse (?,?,?,?,?,?,?)";
+    var course_sql = "CALL updateCourse (?,?,?,?,?,?,?,?)";
     dbconnect.query(
       course_sql,
-      [id, name, type, requirement, target, cost, numOfLecture],
+      [id, name, type, requirement, target, cost, teacher_requirement, numOfLecture],
       (err, result, fields) => {
         if (err) {
           reject(err);

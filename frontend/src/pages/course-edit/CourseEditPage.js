@@ -37,6 +37,7 @@ const initCourse = {
   requirement: "",
   target: "",
   cost: "",
+  teacher_requirement: "",
   numOfLecture: 0,
 };
 
@@ -68,7 +69,8 @@ export default function CourseEditPage() {
       field.type === "" ||
       field.requirement === "" ||
       field.target === "" ||
-      field.cost === "";
+      field.cost === "" ||
+      field.teacher_requirement === "";
     if (bool_exp) setError(true);
     else setError(false);
     return !bool_exp;
@@ -93,6 +95,7 @@ export default function CourseEditPage() {
         requirement: parseFloat(courseInfo.requirement),
         target: parseFloat(courseInfo.target),
         cost: parseFloat(courseInfo.cost),
+        teacher_requirement: parseFloat(courseInfo.teacher_requirement),
         numOfLecture: parseInt(curriculum.length),
         curriculum: curriculum,
       };
@@ -279,6 +282,14 @@ export default function CourseEditPage() {
                 label="Phí"
                 name="cost"
                 value={courseInfo.cost}
+                onChange={handleInputChange}
+              />
+              <TextField 
+                margin="normal"
+                fullWidth
+                label="Yêu cầu giảng viên"
+                name="teacher_requirement"
+                value={courseInfo.teacher_requirement}
                 onChange={handleInputChange}
               />
               {error ? (

@@ -33,6 +33,7 @@ const TABLE_HEAD = [
   { id: "requirement", label: "Yêu cầu", align: "center" },
   { id: "target", label: "Mục tiêu", align: "center" },
   { id: "cost", label: "Phí (VND)", align: "left" },
+  { id: "teacher_requirement", label: "Yêu cầu giảng viên", align: "center" },
   { id: "num_of_lec", label: "Số buổi", align: "center" },
   { id: "view_class" },
   { id: "option" },
@@ -185,6 +186,7 @@ export default function CourseAdminPage() {
                         requirement,
                         target,
                         cost,
+                        teacher_requirement,
                         numOfLecture,
                       } = course;
 
@@ -203,6 +205,8 @@ export default function CourseAdminPage() {
                           <TableCell align="left">
                             {numberWithCommas(cost)}
                           </TableCell>
+
+                          <TableCell align="center">{teacher_requirement}</TableCell>
 
                           <TableCell align="center">{numOfLecture}</TableCell>
 

@@ -48,7 +48,6 @@ CREATE TABLE `teacher` (
     `level_reading` FLOAT,
     `level_writing` FLOAT,
     `level_speaking` FLOAT,
-    `type` INT,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`id`) REFERENCES `user`(`id`),
     CHECK (`start_date` >= '2022-09-01'),
@@ -57,8 +56,7 @@ CREATE TABLE `teacher` (
     CHECK (`level_listening` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
     CHECK (`level_reading` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
     CHECK (`level_writing` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
-    CHECK (`level_speaking` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
-    CHECK (`type` IN (1, 2, 3))
+    CHECK (`level_speaking` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9))
 );
 
 DROP TABLE IF EXISTS `student`;
@@ -87,13 +85,16 @@ CREATE TABLE course (
     `target` FLOAT NOT NULL DEFAULT 0,
     `cost` FLOAT,
     `numOfLecture` INT,
+    `teacher_requirement` FLOAT DEFAULT 7,
     PRIMARY KEY (`course_id`),
     CHECK (`course_id` REGEXP '[A-Z]{2}-[0-9]{2}'),
     CHECK (`type` IN ('OVERALL', 'LISTENING', 'READING', 'WRITING', 'SPEAKING')),
     CHECK (`requirement` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
     CHECK (`target` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
     CHECK (`target` > `requirement`),
-    CHECK (`cost` >= 0)
+    CHECK (`cost` >= 0),
+    CHECK (`teacher_requirement` IN (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9)),
+    CHECK (`teacher_requirement` >= `target`)
 );
 
 DROP TABLE IF EXISTS `class`;
