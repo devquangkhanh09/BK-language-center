@@ -248,7 +248,7 @@ BEGIN
     IF EXISTS (
 		SELECT * 
 		FROM `class` 
-		WHERE ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `branch_id` = `_branch_id` AND `room` = `_room` AND `time` = `_time`
+		WHERE (`course_id` <> `_course_id` OR `class_id` <> `_class_id`) AND ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `branch_id` = `_branch_id` AND `room` = `_room` AND `time` = `_time`
     ) THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate use of room";
 	END IF;
@@ -276,7 +276,7 @@ BEGIN
     IF EXISTS (
 		SELECT *
         FROM `class`
-        WHERE ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `teacher_id` = `_teacher_id` AND `time` = `_time`
+        WHERE (`course_id` <> `_course_id` OR `class_id` <> `_class_id`) AND ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `teacher_id` = `_teacher_id` AND `time` = `_time`
     ) THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate schedule of teacher";
 	END IF;

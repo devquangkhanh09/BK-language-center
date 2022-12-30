@@ -70,8 +70,21 @@ exports.get_all_student_class = async function () {
 
 exports.get_all_teacher = async function () {
   return new Promise((resolve, reject) => {
-    class_query = "SELECT * FROM teacher";
-    dbconnect.query(class_query, (err, result, fields) => {
+    teacher_query = "SELECT * FROM teacher";
+    dbconnect.query(teacher_query, (err, result, fields) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+exports.get_all_branches = async function () {
+  return new Promise((resolve, reject) => {
+    branch_query = "SELECT * FROM branch";
+    dbconnect.query(branch_query, (err, result, fields) => {
       if (err) {
         reject(err);
       } else {

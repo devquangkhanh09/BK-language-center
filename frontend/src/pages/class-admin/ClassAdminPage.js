@@ -52,13 +52,11 @@ const TABLE_HEAD = [
 const initClass = {
   class_id: "",
   start_date: "",
-  end_date: "",
   form: "",
   branch_id: "",
   room: "",
   time: "",
   teacher_id: "",
-  numOfStudent: 0,
 };
 
 //-------------------------------------------------
@@ -74,6 +72,8 @@ export default function ClassAdminPage() {
 
   //-------------------------------------------------------------
   const [classList, setClassList] = useState([]);
+  const [teacherList, setTeacherList] = useState([]);
+  const [branchList, setBranchList] = useState([]);
 
   const [classID, setClassID] = useState("");
 
@@ -83,6 +83,20 @@ export default function ClassAdminPage() {
       .then((res) => {
         var myList = res.data.filter((item) => item.course_id === id);
         setClassList(myList);
+      })
+      .catch((error) => console.log(error));
+
+    axios
+      .get("/api/admin/teachers")
+      .then((res) => {
+        setTeacherList(res.data);
+      })
+      .catch((error) => console.log(error));
+
+    axios
+      .get("/api/admin/branches")
+      .then((res) => {
+        setBranchList(res.data);
       })
       .catch((error) => console.log(error));
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -137,7 +151,6 @@ export default function ClassAdminPage() {
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
-    console.log(classInfo);
     const newClass = { course_id: id, ...classInfo };
     axios
       .post("/api/admin/class-create", newClass)
@@ -146,8 +159,16 @@ export default function ClassAdminPage() {
         setActStatus(true);
         setOpenNoti(true);
         // insert in front-end
-        setClassList([newClass, ...classList]);
         resetForm();
+        setOpenPopup(false);
+
+        axios
+          .get("/api/admin/class")
+          .then((res) => {
+            var myList = res.data.filter((item) => item.course_id === id);
+            setClassList(myList);
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => {
         //to-do: handle fail
@@ -190,6 +211,7 @@ export default function ClassAdminPage() {
           (item) => item.class_id !== classID
         );
         setClassList(newClassList);
+        setOpen(null);
       })
       .catch((error) => {
         if (error.response) setActMessage(error.response.data.message);
@@ -222,15 +244,13 @@ export default function ClassAdminPage() {
         setActStatus(true);
         setOpenNoti(true);
         // edit in front-end
-        var edited_item = { course_id: id, ...classEditInfo };
-        var new_list = [...classList];
-        for (var i in new_list) {
-          if (new_list[i].class_id === classID) {
-            new_list[i] = edited_item;
-            break;
-          }
-        }
-        setClassList(new_list);
+        axios
+          .get("/api/admin/class")
+          .then((res) => {
+            var myList = res.data.filter((item) => item.course_id === id);
+            setClassList(myList);
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => {
         //to-do: handle fail
@@ -244,7 +264,6 @@ export default function ClassAdminPage() {
   const handleOpenEditPopup = () => {
     var edit_data = classList.filter((item) => item.class_id === classID)[0];
     edit_data.start_date = edit_data.start_date.split("T")[0];
-    edit_data.end_date = edit_data.end_date.split("T")[0];
     setClassEditInfo(edit_data);
     setOpenEditPopup(true);
     handleCloseMenu();
@@ -443,14 +462,6 @@ export default function ClassAdminPage() {
                   onChange={handleInputChange}
                 />
 
-                <TextField
-                  fullWidth
-                  label="Ngày kết thúc (YYYY-MM-DD)"
-                  name="end_date"
-                  value={classInfo.end_date}
-                  onChange={handleInputChange}
-                />
-
                 <FormControl fullWidth>
                   <InputLabel id="form-select-label">Hình thức</InputLabel>
                   <Select
@@ -460,8 +471,8 @@ export default function ClassAdminPage() {
                     value={classInfo.form}
                     onChange={handleInputChange}
                   >
-                    <MenuItem value="online">Online</MenuItem>
-                    <MenuItem value="offline">Offline</MenuItem>
+                    <MenuItem value="online" key={0}>Online</MenuItem>
+                    <MenuItem value="offline" key={1}>Offline</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -476,13 +487,21 @@ export default function ClassAdminPage() {
                   gap: 3,
                 }}
               >
-                <TextField
-                  fullWidth
-                  label="Chi nhánh"
-                  name="branch_id"
-                  value={classInfo.branch_id}
-                  onChange={handleInputChange}
-                />
+
+                <FormControl fullWidth>
+                  <InputLabel id="form-select-label">Chi nhánh</InputLabel>
+                  <Select
+                    labelId="form-select-label"
+                    label="Chi nhánh"
+                    name="branch_id"
+                    value={classInfo.branch_id}
+                    onChange={handleInputChange}
+                  >
+                    {
+                      branchList.map((branch, idx) => <MenuItem value={branch.branch_id} key={idx}>{branch.branch_id}</MenuItem>)
+                    }
+                  </Select>
+                </FormControl>
 
                 <TextField
                   fullWidth
@@ -501,21 +520,29 @@ export default function ClassAdminPage() {
                     value={classInfo.time}
                     onChange={handleInputChange}
                   >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={4}>4</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={1} key={0}>1</MenuItem>
+                    <MenuItem value={2} key={1}>2</MenuItem>
+                    <MenuItem value={3} key={2}>3</MenuItem>
+                    <MenuItem value={4} key={3}>4</MenuItem>
+                    <MenuItem value={5} key={4}>5</MenuItem>
+                    <MenuItem value={6} key={5}>6</MenuItem>
                   </Select>
                 </FormControl>
 
-                <TextField
-                  fullWidth
-                  label="Giáo viên"
-                  name="teacher_id"
-                  value={classInfo.teacher_id}
-                  onChange={handleInputChange}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="form-select-label">Giảng viên</InputLabel>
+                  <Select
+                    labelId="form-select-label"
+                    label="Giảng viên"
+                    name="teacher_id"
+                    value={classInfo.teacher_id}
+                    onChange={handleInputChange}
+                  >
+                    {
+                      teacherList.map((teacher, idx) => <MenuItem value={teacher.id} key={idx}>{teacher.id}</MenuItem>)
+                    }
+                  </Select>
+                </FormControl>
               </Box>
             </Grid>
           </Grid>
@@ -552,6 +579,7 @@ export default function ClassAdminPage() {
                   fullWidth
                   label="Mã lớp"
                   name="class_id"
+                  disabled
                   value={classEditInfo.class_id}
                   onChange={handleInputEditChange}
                 />
@@ -564,14 +592,6 @@ export default function ClassAdminPage() {
                   onChange={handleInputEditChange}
                 />
 
-                <TextField
-                  fullWidth
-                  label="Ngày kết thúc (YYYY-MM-DD)"
-                  name="end_date"
-                  value={classEditInfo.end_date}
-                  onChange={handleInputEditChange}
-                />
-
                 <FormControl fullWidth>
                   <InputLabel id="form-select-label">Hình thức</InputLabel>
                   <Select
@@ -581,8 +601,8 @@ export default function ClassAdminPage() {
                     value={classEditInfo.form}
                     onChange={handleInputEditChange}
                   >
-                    <MenuItem value="online">Online</MenuItem>
-                    <MenuItem value="offline">Offline</MenuItem>
+                    <MenuItem value="online" key={0}>Online</MenuItem>
+                    <MenuItem value="offline" key={1}>Offline</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -597,13 +617,20 @@ export default function ClassAdminPage() {
                   gap: 3,
                 }}
               >
-                <TextField
-                  fullWidth
-                  label="Chi nhánh"
-                  name="branch_id"
-                  value={classEditInfo.branch_id}
-                  onChange={handleInputEditChange}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="form-select-label">Chi nhánh</InputLabel>
+                  <Select
+                    labelId="form-select-label"
+                    label="Chi nhánh"
+                    name="branch_id"
+                    value={classEditInfo.branch_id}
+                    onChange={handleInputEditChange}
+                  >
+                    {
+                      branchList.map((branch, idx) => <MenuItem value={branch.branch_id} key={idx}>{branch.branch_id}</MenuItem>)
+                    }
+                  </Select>
+                </FormControl>
 
                 <TextField
                   fullWidth
@@ -622,21 +649,29 @@ export default function ClassAdminPage() {
                     value={classEditInfo.time}
                     onChange={handleInputEditChange}
                   >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={4}>4</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={1} key={0}>1</MenuItem>
+                    <MenuItem value={2} key={1}>2</MenuItem>
+                    <MenuItem value={3} key={2}>3</MenuItem>
+                    <MenuItem value={4} key={3}>4</MenuItem>
+                    <MenuItem value={5} key={4}>5</MenuItem>
+                    <MenuItem value={6} key={5}>6</MenuItem>
                   </Select>
                 </FormControl>
 
-                <TextField
-                  fullWidth
-                  label="Giáo viên"
-                  name="teacher_id"
-                  value={classEditInfo.teacher_id}
-                  onChange={handleInputEditChange}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="form-select-label">Giảng viên</InputLabel>
+                  <Select
+                    labelId="form-select-label"
+                    label="Giảng viên"
+                    name="teacher_id"
+                    value={classEditInfo.teacher_id}
+                    onChange={handleInputEditChange}
+                  >
+                    {
+                      teacherList.map((teacher, idx) => <MenuItem value={teacher.id} key={idx}>{teacher.id}</MenuItem>)
+                    }
+                  </Select>
+                </FormControl>
               </Box>
             </Grid>
           </Grid>

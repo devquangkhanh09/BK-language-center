@@ -45,6 +45,11 @@ router.get("/teachers", async (req, res) => {
   res.json(all_teacher);
 });
 
+router.get("/branches", async (req, res) => {
+  var all_branches = await query.get_all_branches();
+  res.json(all_branches);
+});
+
 router.get("/students", async (req, res) => {
   var all_student = await query.get_all_student();
   res.json(all_student);
@@ -57,6 +62,11 @@ router.get("/handle-register", async (req, res) => {
 
 router.get("/class", async (req, res) => {
   var all_class = await query.get_all_class();
+  all_class = all_class.map(_class => {
+    if (_class.branch_id === null) _class.branch_id = "";
+    if (_class.room === null) _class.room = "";
+    return _class;
+  })
   res.json(all_class);
 });
 
@@ -133,8 +143,8 @@ router.post("/class-create", async (req, res) => {
     req.body.class_id,
     req.body.start_date,
     req.body.form,
-    req.body.branch_id,
-    req.body.room,
+    req.body.branch_id === ""? null:req.body.branch_id,
+    req.body.room === ""? null:req.body.room,
     req.body.time,
     req.body.teacher_id
   ], (err, result) => {
@@ -152,8 +162,8 @@ router.post("/class-edit", async (req, res) => {
     req.body.class_id,
     req.body.start_date,
     req.body.form,
-    req.body.branch_id,
-    req.body.room,
+    req.body.branch_id === ""? null:req.body.branch_id,
+    req.body.room === ""? null:req.body.room,
     req.body.time,
     req.body.teacher_id
   ], (err, result) => {

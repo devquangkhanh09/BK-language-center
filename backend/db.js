@@ -5,7 +5,8 @@ exports.connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: process.env.MYSQL_PASSWORD,
-    database : "language_center"
+    database : "language_center",
+    timezone: "utc"
 });
   
 exports.connection.connect(function(err) {
