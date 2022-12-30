@@ -53,14 +53,12 @@ router.get("/classes", async (req, res) => {
       room: element.room,
       time: sched,
       teacher_name: (await query.teacherInfo(element.teacher_id)).full_name,
-      status: element.status,
       numOfStudent: element.numOfStudent,
       maxStudent: element.maxStudent,
       studentStatus: std_status,
     };
     result.push(ele);
   }
-  console.log(result);
   res.json(result);
 });
 

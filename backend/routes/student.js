@@ -46,7 +46,6 @@ router.get("/course-info", async (req, res) => {
               description: cur.description
           });
       })
-    console.log(result);
     res.json(result);
   });
 
@@ -80,6 +79,7 @@ router.get("/classes/:id", async (req, res) => {
         var checkStdClass = await query.checkStudentInClass(req.user.id, element.class_id, id);
         if (checkStdClass.length === 0) {
             if (element.numOfStudent === element.maxStudent) std_status = 1;
+            else if (element.start_date.toISOString().split('T')[0] <= (new Date()).toISOString().split('T')[0]) std_status = 4;
             else std_status = 0;
         }
         else {
@@ -96,20 +96,17 @@ router.get("/classes/:id", async (req, res) => {
             room: element.room,
             time: sched,
             teacher_name: (await query.teacherInfo(element.teacher_id)).full_name,
-            status: element.status,
             numOfStudent: element.numOfStudent,
             maxStudent: element.maxStudent,
             studentStatus: std_status,
         }
         result.push(ele);
     };
-    console.log(result)
     res.json(result);
 });
 
 router.post("/register-class", async (req, res) => {
     var sql = "CALL add_student_class(?,?,?)";
-    console.log(req.body);
     dbconnect.query(sql, [req.body.course_id, req.body.class_id, req.user.id], (err, result) => {
         if(err) {
             res.status(400).send({message: err.message});

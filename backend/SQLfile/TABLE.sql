@@ -108,7 +108,6 @@ CREATE TABLE `class` (
     `room` CHAR(3),
     `time` INT,
     `teacher_id` CHAR(9) NOT NULL,
-    `status` VARCHAR(30),
     `numOfStudent` INT,
     `maxStudent` INT DEFAULT 20,
     PRIMARY KEY (`course_id`, `class_id`),

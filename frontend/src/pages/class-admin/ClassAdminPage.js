@@ -58,7 +58,6 @@ const initClass = {
   room: "",
   time: "",
   teacher_id: "",
-  status: "incoming",
   numOfStudent: 0,
 };
 
@@ -302,7 +301,6 @@ export default function ClassAdminPage() {
                         room,
                         time,
                         teacher_id,
-                        status,
                         numOfStudent,
                       } = class_;
 
@@ -328,7 +326,7 @@ export default function ClassAdminPage() {
 
                           <TableCell align="left">{teacher_id}</TableCell>
 
-                          <TableCell align="left">{status}</TableCell>
+                          <TableCell align="left">{(start_date > (new Date()).toISOString().split('T')[0])? "Chưa diễn ra":"Đang diễn ra"}</TableCell>
 
                           <TableCell align="center">{numOfStudent}</TableCell>
                           <TableCell align="right">

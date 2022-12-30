@@ -15,71 +15,11 @@ import axios from "axios";
 import ConfirmPopup from "../../components/confirm-popup";
 import Notification from "../../components/notification";
 
-const testClassList = [
-  {
-    class_id: "2022-04",
-    start_date: "2022-10-01",
-    end_date: "2023-01-02",
-    form: "offline",
-    branch_id: "SG01",
-    room: "201",
-    time: "20:00-23:00",
-    teacher_name: "Nguyen Thi Thu Thao",
-    status: "incoming",
-    numOfStudent: 20,
-    maxStudent: 20,
-    studentStatus: 1,
-  },
-
-  {
-    class_id: "2022-05",
-    start_date: "2022-10-01",
-    end_date: "2023-01-02",
-    form: "offline",
-    branch_id: "SG01",
-    room: "201",
-    time: "20:00-23:00",
-    teacher_name: "Nguyen Thi Thu Thao",
-    status: "current",
-    numOfStudent: 5,
-    maxStudent: 20,
-    studentStatus: 0,
-  },
-
-  {
-    class_id: "2022-06",
-    start_date: "2022-10-01",
-    end_date: "2023-01-02",
-    form: "online",
-    branch_id: null,
-    room: null,
-    time: "20:00-23:00",
-    teacher_name: "Nguyen Thi Thu Thao",
-    status: "incoming",
-    numOfStudent: 4,
-    maxStudent: 20,
-    studentStatus: 2,
-  },
-
-  {
-    class_id: "2022-07",
-    start_date: "2022-10-01",
-    end_date: "2023-01-02",
-    form: "offline",
-    branch_id: "SG01",
-    room: "201",
-    time: "20:00-23:00",
-    teacher_name: "Nguyen Thi Thu Thao",
-    status: "incoming",
-    numOfStudent: 5,
-    maxStudent: 20,
-    studentStatus: 3,
-  },
-];
+const initClassList = [];
 
 // NOTE: not yet complete, testing purpose only
 export default function ClassStudentPage() {
-  const [classList, setClassList] = useState(testClassList);
+  const [classList, setClassList] = useState(initClassList);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -92,7 +32,6 @@ export default function ClassStudentPage() {
       .get(`/api/student/classes/${id}`)
       .then((res) => {
         var myList = res.data;
-        console.log(myList);
         setClassList(myList);
       })
       .catch((error) => navigate("/", { replace: true }));
@@ -145,7 +84,6 @@ export default function ClassStudentPage() {
       .catch((error) => {
         setOpenConfirm(false);
         setActStatus(false);
-        console.log(error);
         if (error.response) setActMessage(error.response.data.message);
         else setActMessage(error.message);
         setOpenNoti(true);
@@ -205,7 +143,7 @@ export default function ClassStudentPage() {
                         variant="subtitle1"
                         sx={{ fontStyle: "italic" }}
                         color={
-                          studentStatus === 1
+                          studentStatus === 1 || studentStatus === 4
                             ? "red"
                             : studentStatus === 2
                             ? "gray"
@@ -218,6 +156,8 @@ export default function ClassStudentPage() {
                           "Đang đợi xác nhận..."
                         ) : studentStatus === 3 ? (
                           "Xác nhận đăng ký thành công"
+                        ) : studentStatus === 4 ? (
+                          "Đã quá hạn đăng ký lớp học"
                         ) : (
                           <br />
                         )}

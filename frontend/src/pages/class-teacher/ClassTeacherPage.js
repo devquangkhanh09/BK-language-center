@@ -145,7 +145,6 @@ export default function ClassTeacherPage() {
               room,
               time,
               teacher_name,
-              status,
             } = _class;
 
             return (
@@ -158,9 +157,9 @@ export default function ClassTeacherPage() {
                       </Typography>
                     }
                     subheader={
-                      status !== "" ? (
-                        <Chip label={status} color="success" />
-                      ) : null
+                      start_date > (new Date()).toISOString().split('T')[0] 
+                      ? <Chip label={ "Chưa diễn ra" } color="info" />
+                      : <Chip label={ "Đang diễn ra" } color="success" />
                     }
                   />
 

@@ -128,8 +128,7 @@ CREATE PROCEDURE add_class (
     `_branch_id` CHAR(4),
     `_room` CHAR(3),
     `_time` INT,
-    `_teacher_id` CHAR(9),
-    `_status` VARCHAR(30)
+    `_teacher_id` CHAR(9)
 ) 
 BEGIN
 
@@ -184,8 +183,7 @@ BEGIN
 		`_branch_id`,
 		`_room`,
 		`_time`,
-		`_teacher_id`,
-		`_status`
+		`_teacher_id`
     );
     
 END $$
@@ -366,6 +364,7 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS `delete_class` $$
 CREATE PROCEDURE `delete_class` ( _course_id CHAR(9), _class_id CHAR(9)) 
 BEGIN
+	DELETE FROM `attendance` WHERE course_id = _course_id and class_id = _class_id;
     DELETE FROM `student_class` WHERE course_id = _course_id and class_id = _class_id;
 	DELETE FROM `class` WHERE course_id = _course_id and class_id = _class_id;
 END $$

@@ -129,7 +129,7 @@ router.put("/course-edit", async (req, res) => {
 
 router.post("/class-create", async (req, res) => {
   var course_sql =
-    "INSERT INTO class(course_id,class_id,start_date,end_date,form,branch_id,room,time,teacher_id,status,numOfStudent) VALUES('" +
+    "INSERT INTO class(course_id,class_id,start_date,end_date,form,branch_id,room,time,teacher_id,numOfStudent) VALUES('" +
     req.body.course_id +
     "','" +
     req.body.class_id +
@@ -147,8 +147,6 @@ router.post("/class-create", async (req, res) => {
     req.body.time +
     "','" +
     req.body.teacher_id +
-    "','" +
-    req.body.status +
     "','" +
     0 +
     "')";
