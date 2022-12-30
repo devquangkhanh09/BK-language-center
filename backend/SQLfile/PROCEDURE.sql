@@ -133,6 +133,8 @@ CREATE PROCEDURE add_class (
 BEGIN
 
 	DECLARE `_end_date` DATE;
+    DECLARE `_teacher_requirement`, `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking` FLOAT;
+    DECLARE `_type` VARCHAR(10);
 	
 	IF EXISTS (SELECT * FROM `class` WHERE `course_id` = `_course_id` AND `class_id` = `_class_id`) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: course_id and class_id must be unique";
@@ -145,9 +147,7 @@ BEGIN
 	ELSEIF NOT (`_class_id` REGEXP '[0-9]{4}-[0-9]{2}') THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: class_id has invalid syntax";
 	ELSEIF NOT (`_start_date` >= '2022-09-01') THEN 
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be smaller than 2022-09-01";
-	ELSEIF NOT (`_start_date` < `_end_date`) THEN 
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be smaller than end_date";
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be greater than 2022-09-01";
 	ELSEIF NOT (`_form` IN ('online', 'offline')) THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: form must be online or offline";
 	ELSEIF NOT (`_time` >= 1 AND `_time` <= 6) THEN 
@@ -163,6 +163,26 @@ BEGIN
 		WHERE ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `branch_id` = `_branch_id` AND `room` = `_room` AND `time` = `_time`
     ) THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate use of room";
+	END IF;
+    
+    SELECT `type`, `teacher_requirement`
+    INTO `_type`, `_teacher_requirement`
+    FROM `course`
+    WHERE `course_id` = `_course_id`;
+    
+    SELECT `level_overall`, `level_listening`, `level_reading`, `level_writing`, `level_speaking`
+    INTO `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking`
+    FROM `teacher`
+    WHERE `id` = `_teacher_id`;
+    
+    IF (
+		(`_type` = "OVERALL" AND `_level_overall` < `_teacher_requirement`) OR
+        (`_type` = "LISTENING" AND `_level_listening` < `_teacher_requirement`) OR
+        (`_type` = "READING" AND `_level_reading` < `_teacher_requirement`) OR
+        (`_type` = "WRITING" AND `_level_writing` < `_teacher_requirement`) OR
+        (`_type` = "SPEAKING" AND `_level_speaking` < `_teacher_requirement`)
+	) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: level of teacher does not meet requirement";
 	END IF;
     
     IF EXISTS (
@@ -183,8 +203,87 @@ BEGIN
 		`_branch_id`,
 		`_room`,
 		`_time`,
-		`_teacher_id`
+		`_teacher_id`,
+        0,
+        20
     );
+    
+END $$
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS update_class $$
+CREATE PROCEDURE update_class (
+	`_course_id` CHAR(5),
+    `_class_id` CHAR(7),
+    `_start_date` DATE,
+    `_form` VARCHAR(10),
+    `_branch_id` CHAR(4),
+    `_room` CHAR(3),
+    `_time` INT,
+    `_teacher_id` CHAR(9)
+) 
+BEGIN
+
+	DECLARE `_end_date` DATE;
+    DECLARE `_teacher_requirement`, `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking` FLOAT;
+    DECLARE `_type` VARCHAR(10);
+	
+	IF NOT EXISTS (SELECT * FROM `class` WHERE `course_id` = `_course_id` AND `class_id` = `_class_id`) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: course_id and class_id must exist";
+	ELSEIF (`_branch_id` IS NOT NULL) AND (`_room` IS NOT NULL) AND NOT EXISTS (SELECT * FROM `classroom` WHERE `branch_id` = `_branch_id` AND `room` = `_room`) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: branch_id, room must exists in classroom";
+	ELSEIF NOT EXISTS (SELECT * FROM `teacher` WHERE `id` = `_teacher_id`) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: teacher_id must exists in teacher";
+	ELSEIF NOT (`_start_date` >= '2022-09-01') THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be greater than 2022-09-01";
+	ELSEIF NOT (`_form` IN ('online', 'offline')) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: form must be online or offline";
+	ELSEIF NOT (`_time` >= 1 AND `_time` <= 6) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: time must be between 1 and 6";
+	END IF;
+    
+    SET `_start_date` = get_new_start_date(`_start_date`, `_time`);
+    SET `_end_date` = adddate(`_start_date`, 7 * ((SELECT `numOfLecture` FROM `course` WHERE `course_id` = `_course_id`) - 1));
+    
+    IF EXISTS (
+		SELECT * 
+		FROM `class` 
+		WHERE ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `branch_id` = `_branch_id` AND `room` = `_room` AND `time` = `_time`
+    ) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate use of room";
+	END IF;
+    
+    SELECT `type`, `teacher_requirement`
+    INTO `_type`, `_teacher_requirement`
+    FROM `course`
+    WHERE `course_id` = `_course_id`;
+    
+    SELECT `level_overall`, `level_listening`, `level_reading`, `level_writing`, `level_speaking`
+    INTO `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking`
+    FROM `teacher`
+    WHERE `id` = `_teacher_id`;
+    
+    IF (
+		(`_type` = "OVERALL" AND `_level_overall` < `_teacher_requirement`) OR
+        (`_type` = "LISTENING" AND `_level_listening` < `_teacher_requirement`) OR
+        (`_type` = "READING" AND `_level_reading` < `_teacher_requirement`) OR
+        (`_type` = "WRITING" AND `_level_writing` < `_teacher_requirement`) OR
+        (`_type` = "SPEAKING" AND `_level_speaking` < `_teacher_requirement`)
+	) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: level of teacher does not meet requirement";
+	END IF;
+    
+    IF EXISTS (
+		SELECT *
+        FROM `class`
+        WHERE ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `teacher_id` = `_teacher_id` AND `time` = `_time`
+    ) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate schedule of teacher";
+	END IF;
+    
+    UPDATE `class`
+    SET `start_date` = `_start_date`, `end_date` = `_end_date`, `form` = `_form`, `branch_id` = `_branch_id`, `room` = `_room`, `time` = `_time`, `teacher_id` = `_teacher_id`
+    WHERE `course_id` = `_course_id` AND `class_id` = `_class_id`;
     
 END $$
 

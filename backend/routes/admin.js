@@ -128,29 +128,16 @@ router.put("/course-edit", async (req, res) => {
 });
 
 router.post("/class-create", async (req, res) => {
-  var course_sql =
-    "INSERT INTO class(course_id,class_id,start_date,end_date,form,branch_id,room,time,teacher_id,numOfStudent) VALUES('" +
-    req.body.course_id +
-    "','" +
-    req.body.class_id +
-    "','" +
-    req.body.start_date +
-    "','" +
-    req.body.end_date +
-    "','" +
-    req.body.form +
-    "','" +
-    req.body.branch_id +
-    "','" +
-    req.body.room +
-    "','" +
-    req.body.time +
-    "','" +
-    req.body.teacher_id +
-    "','" +
-    0 +
-    "')";
-  dbconnect.query(course_sql, (err, result) => {
+  dbconnect.query("CALL add_class(?,?,?,?,?,?,?,?)", [
+    req.body.course_id,
+    req.body.class_id,
+    req.body.start_date,
+    req.body.form,
+    req.body.branch_id,
+    req.body.room,
+    req.body.time,
+    req.body.teacher_id
+  ], (err, result) => {
     if (err) {
       res.status(400).json({message: err.message});
     } else {
@@ -160,34 +147,16 @@ router.post("/class-create", async (req, res) => {
 });
 
 router.post("/class-edit", async (req, res) => {
-  var class_sql =
-    "UPDATE class SET " +
-    "start_date = '" +
-    req.body.start_date +
-    "'," +
-    "end_date = '" +
-    req.body.end_date +
-    "'," +
-    "form = '" +
-    req.body.form +
-    "'," +
-    "branch_id = '" +
-    req.body.branch_id +
-    "'," +
-    "room = '" +
-    req.body.room +
-    "'," +
-    "time = '" +
-    req.body.time +
-    "'," +
-    "teacher_id = '" +
-    req.body.teacher_id +
-    "' WHERE course_id = '" +
-    req.body.course_id +
-    "' AND class_id = '" +
-    req.body.class_id +
-    "'";
-  dbconnect.query(class_sql, (err, result) => {
+  dbconnect.query("CALL update_class(?,?,?,?,?,?,?,?)", [
+    req.body.course_id,
+    req.body.class_id,
+    req.body.start_date,
+    req.body.form,
+    req.body.branch_id,
+    req.body.room,
+    req.body.time,
+    req.body.teacher_id
+  ], (err, result) => {
     if (err) {
       res.status(400).json({message: err.message});
     } else {
