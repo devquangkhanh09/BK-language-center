@@ -30,13 +30,15 @@ CREATE TABLE `course` (
   `target` float NOT NULL DEFAULT '0',
   `cost` float DEFAULT NULL,
   `numOfLecture` int DEFAULT NULL,
+  `teacher_requirement` float DEFAULT '7',
   PRIMARY KEY (`course_id`),
   CONSTRAINT `course_chk_1` CHECK (regexp_like(`course_id`,_utf8mb4'[A-Z]{2}-[0-9]{2}')),
   CONSTRAINT `course_chk_2` CHECK ((`type` in (_utf8mb4'OVERALL',_utf8mb4'LISTENING',_utf8mb4'READING',_utf8mb4'WRITING',_utf8mb4'SPEAKING'))),
   CONSTRAINT `course_chk_3` CHECK ((`requirement` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))),
   CONSTRAINT `course_chk_4` CHECK ((`target` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))),
   CONSTRAINT `course_chk_5` CHECK ((`target` > `requirement`)),
-  CONSTRAINT `course_chk_6` CHECK ((`cost` >= 0))
+  CONSTRAINT `course_chk_6` CHECK ((`cost` >= 0)),
+  CONSTRAINT `course_chk_7` CHECK (((`teacher_requirement` >= `target`) and (`teacher_requirement` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -46,7 +48,7 @@ CREATE TABLE `course` (
 
 LOCK TABLES `course` WRITE;
 /*!40000 ALTER TABLE `course` DISABLE KEYS */;
-INSERT INTO `course` VALUES ('FD-01','IELTS Foundation 1','OVERALL',0,3,5000000,10),('FD-02','IELTS Foundation 2','OVERALL',3,4,5000000,10),('JR-01','IELTS Junior','OVERALL',4,5,7500000,10),('JR-02','IELTS Junior 2','OVERALL',5,6,10000000,6),('LS-01','IELTS Listening 1','LISTENING',0,3,2500000,10),('SR-01','IELTS Senior','OVERALL',6,7,10000000,10);
+INSERT INTO `course` VALUES ('FD-01','IELTS Foundation 1','OVERALL',0,3,5000000,10,7),('FD-02','IELTS Foundation 2','OVERALL',3,4,5000000,10,7),('JR-01','IELTS Junior','OVERALL',4,5,7500000,10,7),('JR-02','IELTS Junior 2','OVERALL',5,6,10000000,6,7),('LS-01','IELTS Listening 1','LISTENING',0,3,2500000,5,7),('RD-01','IELTS Reading 1','READING',0,4.5,7500000,3,7),('SR-01','IELTS Senior','OVERALL',6,7,10000000,0,7);
 /*!40000 ALTER TABLE `course` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -59,4 +61,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:28
+-- Dump completed on 2022-12-31  0:13:13

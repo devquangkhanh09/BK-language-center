@@ -31,7 +31,6 @@ CREATE TABLE `teacher` (
   `level_reading` float DEFAULT NULL,
   `level_writing` float DEFAULT NULL,
   `level_speaking` float DEFAULT NULL,
-  `type` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `teacher_ibfk_1` FOREIGN KEY (`id`) REFERENCES `user` (`id`),
   CONSTRAINT `teacher_chk_1` CHECK ((`start_date` >= _utf8mb4'2022-09-01')),
@@ -40,8 +39,7 @@ CREATE TABLE `teacher` (
   CONSTRAINT `teacher_chk_4` CHECK ((`level_listening` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))),
   CONSTRAINT `teacher_chk_5` CHECK ((`level_reading` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))),
   CONSTRAINT `teacher_chk_6` CHECK ((`level_writing` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))),
-  CONSTRAINT `teacher_chk_7` CHECK ((`level_speaking` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9))),
-  CONSTRAINT `teacher_chk_8` CHECK ((`type` in (1,2,3)))
+  CONSTRAINT `teacher_chk_7` CHECK ((`level_speaking` in (0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -51,7 +49,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES ('TC-010355','2022-09-01',2,8,9,8,7.5,8,2),('TC-010999','2022-10-01',1,8,8.5,8.5,7,7,2),('TC-201033','2022-09-15',5,9,9,9,8.5,8.5,1);
+INSERT INTO `teacher` VALUES ('TC-010355','2022-09-01',2,8,9,8,7.5,8),('TC-010999','2022-10-01',1,8,8.5,8.5,7,7),('TC-201033','2022-09-15',5,9,9,9,8.5,8.5);
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -64,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:27
+-- Dump completed on 2022-12-31  0:13:13

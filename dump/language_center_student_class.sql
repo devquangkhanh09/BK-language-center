@@ -53,9 +53,45 @@ CREATE TABLE `student_class` (
 
 LOCK TABLES `student_class` WRITE;
 /*!40000 ALTER TABLE `student_class` DISABLE KEYS */;
-INSERT INTO `student_class` VALUES ('FD-02','2022-06','SD-000492','paid',4.5,4,5.5,1.5,7,'2022-09-01'),('FD-02','2022-06','SD-000494','paid',7,6.5,9,4.5,7.5,'2022-09-05'),('FD-02','2022-06','SD-000495','unpaid',3.5,0,7.5,1.5,4.5,'2022-09-15'),('FD-02','2022-06','SD-000496','paid',2,0,6,0.5,1,'2022-09-30'),('FD-02','2022-06','SD-000497','unpaid',2.5,4,6.5,0,0,'2022-10-01'),('FD-02','2022-06','SD-000498','unpaid',5,6.5,4,6.5,3.5,'2022-10-02'),('FD-02','2022-06','SD-000499','unpaid',4.5,0,7,8.5,3,'2022-11-01');
+INSERT INTO `student_class` VALUES ('FD-02','2022-06','SD-000492','paid',6.5,7,5.5,5.5,7,'2022-09-01'),('FD-02','2022-06','SD-000494','paid',7,6.5,9,4.5,7.5,'2022-09-05'),('FD-02','2022-06','SD-000495','unpaid',3.5,0,7.5,1.5,4.5,'2022-09-15'),('FD-02','2022-06','SD-000496','paid',2,0,6,0.5,1,'2022-09-30'),('FD-02','2022-06','SD-000497','unpaid',2.5,4,6.5,0,0,'2022-10-01'),('FD-02','2022-06','SD-000498','unpaid',5,6.5,4,6.5,3.5,'2022-10-02'),('FD-02','2022-06','SD-000499','unpaid',4.5,0,7,8.5,3,'2022-11-01');
 /*!40000 ALTER TABLE `student_class` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `updateAttendants` AFTER INSERT ON `student_class` FOR EACH ROW UPDATE class SET numOfStudent = numOfStudent + 1 WHERE
+        course_id = NEW.course_id
+            AND class_id = NEW.class_id */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `updateLevelStudent` AFTER UPDATE ON `student_class` FOR EACH ROW BEGIN
+    UPDATE student 
+    SET level_overall = calculate_overall(NEW.grade_listening, NEW.grade_reading, NEW.grade_writing, NEW.grade_speaking) , level_listening = NEW.grade_listening , level_reading = NEW.grade_reading , level_writing = NEW.grade_writing , level_speaking = NEW.grade_speaking 
+    WHERE id = NEW.student_id;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -66,4 +102,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:27
+-- Dump completed on 2022-12-31  0:13:13

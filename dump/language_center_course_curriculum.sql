@@ -38,7 +38,7 @@ CREATE TABLE `course_curriculum` (
 
 LOCK TABLES `course_curriculum` WRITE;
 /*!40000 ALTER TABLE `course_curriculum` DISABLE KEYS */;
-INSERT INTO `course_curriculum` VALUES ('FD-01',1,'Noun'),('FD-01',2,'Verd'),('FD-01',3,'Adjentive'),('FD-01',4,'Adverb'),('FD-01',5,'Sentences'),('FD-01',6,'Linking verb'),('FD-01',7,'Greeting'),('FD-01',8,'Tag question'),('FD-01',9,'Conjunction'),('FD-01',10,'WH-question'),('FD-02',1,'Present simple'),('FD-02',2,'Present continous'),('FD-02',3,'Present perfect'),('FD-02',4,'Past simple'),('FD-02',5,'Past continous'),('FD-02',6,'Past perfect'),('FD-02',7,'Future simple'),('FD-02',8,'Future continous'),('FD-02',9,'Future perfect'),('FD-02',10,'WH-question'),('JR-01',1,'Tense'),('JR-01',2,'Idiom'),('JR-01',3,'Phrasel verb'),('JR-01',4,'Tag question'),('JR-01',5,'Paragraph'),('JR-01',6,'Speaking about hobby'),('JR-01',7,'Reading sample article'),('JR-01',8,'Speaking with foreign'),('JR-01',9,'Test SP-WR'),('JR-01',10,'Test LC-RC'),('JR-02',1,'Reading'),('JR-02',2,'Listening'),('JR-02',3,'Writing'),('JR-02',4,'Speaking'),('JR-02',5,'Test 1'),('JR-02',6,'Test 2');
+INSERT INTO `course_curriculum` VALUES ('FD-01',1,'Noun'),('FD-01',2,'Verd'),('FD-01',3,'Adjentive'),('FD-01',4,'Adverb'),('FD-01',5,'Sentences'),('FD-01',6,'Linking verb'),('FD-01',7,'Greeting'),('FD-01',8,'Tag question'),('FD-01',9,'Conjunction'),('FD-01',10,'WH-question'),('FD-02',1,'Present simple'),('FD-02',2,'Present continous'),('FD-02',3,'Present perfect'),('FD-02',4,'Past simple'),('FD-02',5,'Past continous'),('FD-02',6,'Past perfect'),('FD-02',7,'Future simple'),('FD-02',8,'Future continous'),('FD-02',9,'Future perfect'),('FD-02',10,'WH-question'),('JR-01',1,'Tense'),('JR-01',2,'Idiom'),('JR-01',3,'Phrasel verb'),('JR-01',4,'Tag question'),('JR-01',5,'Paragraph'),('JR-01',6,'Speaking about hobby'),('JR-01',7,'Reading sample article'),('JR-01',8,'Speaking with foreign'),('JR-01',9,'Test SP-WR'),('JR-01',10,'Test LC-RC'),('JR-02',1,'Reading'),('JR-02',2,'Listening'),('JR-02',3,'Writing'),('JR-02',4,'Speaking'),('JR-02',5,'Test 1'),('JR-02',6,'Test 2'),('LS-01',1,'111'),('LS-01',2,'222'),('LS-01',3,'333'),('LS-01',4,'444'),('LS-01',5,'555'),('RD-01',1,'abc'),('RD-01',2,'def'),('RD-01',3,'xyz');
 /*!40000 ALTER TABLE `course_curriculum` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:27
+-- Dump completed on 2022-12-31  0:13:13

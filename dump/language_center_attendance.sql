@@ -43,7 +43,6 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES ('FD-02','2022-06','SD-000492',1,'P',''),('FD-02','2022-06','SD-000492',2,'P',''),('FD-02','2022-06','SD-000492',3,'P',''),('FD-02','2022-06','SD-000494',1,'P',''),('FD-02','2022-06','SD-000494',2,'P',''),('FD-02','2022-06','SD-000494',3,'P',''),('FD-02','2022-06','SD-000495',1,'P',''),('FD-02','2022-06','SD-000495',2,'P',''),('FD-02','2022-06','SD-000495',3,'P',''),('FD-02','2022-06','SD-000496',1,'A','sick'),('FD-02','2022-06','SD-000496',2,'A','sick'),('FD-02','2022-06','SD-000496',3,'P',''),('FD-02','2022-06','SD-000497',1,'P',''),('FD-02','2022-06','SD-000497',2,'P',''),('FD-02','2022-06','SD-000497',3,'P',''),('FD-02','2022-06','SD-000498',1,'P',''),('FD-02','2022-06','SD-000498',2,'P',''),('FD-02','2022-06','SD-000498',3,'P',''),('FD-02','2022-06','SD-000499',1,'A','work'),('FD-02','2022-06','SD-000499',2,'P',''),('FD-02','2022-06','SD-000499',3,'P','  ');
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:27
+-- Dump completed on 2022-12-31  0:13:12

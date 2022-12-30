@@ -32,7 +32,6 @@ CREATE TABLE `class` (
   `room` char(3) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `time` int DEFAULT NULL,
   `teacher_id` char(9) COLLATE utf8mb4_general_ci NOT NULL,
-  `status` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `numOfStudent` int DEFAULT NULL,
   `maxStudent` int DEFAULT '20',
   PRIMARY KEY (`course_id`,`class_id`),
@@ -56,7 +55,7 @@ CREATE TABLE `class` (
 
 LOCK TABLES `class` WRITE;
 /*!40000 ALTER TABLE `class` DISABLE KEYS */;
-INSERT INTO `class` VALUES ('FD-02','2022-04','2022-11-07','2023-01-09','online',NULL,NULL,1,'TC-010999','',0,20),('FD-02','2022-05','2022-11-07','2023-01-09','offline','SG01','101',1,'TC-010355','',0,20),('FD-02','2022-06','2022-11-01','2023-01-03','offline','BD01','102',2,'TC-010355','',7,20),('FD-02','2022-07','2022-11-03','2023-01-05','offline','SG01','201',4,'TC-010999','',0,20),('LS-01','2023-01','2023-01-04','2023-03-08','offline','SG02','101',3,'TC-201033','incoming',0,20),('LS-01','2023-02','2022-10-19','2022-12-21','online',NULL,NULL,3,'TC-201033','current',0,20);
+INSERT INTO `class` VALUES ('FD-02','2022-04','2022-11-07','2023-01-09','online',NULL,NULL,1,'TC-010999',0,20),('FD-02','2022-05','2022-11-07','2023-01-09','offline','SG01','101',1,'TC-010355',0,20),('FD-02','2022-06','2022-09-06','2022-11-08','offline','BD01','102',2,'TC-010355',7,20),('FD-02','2022-07','2022-11-03','2023-01-05','offline','SG01','201',4,'TC-010999',0,20),('FD-02','2023-01','2023-02-11','2023-04-15','offline','SG01','102',6,'TC-201033',0,20),('LS-01','2023-01','2023-01-04','2023-03-08','offline','SG02','101',3,'TC-201033',0,20),('LS-01','2023-02','2022-10-19','2022-12-21','online',NULL,NULL,3,'TC-201033',0,20),('LS-01','2023-03','2023-01-20','2023-02-17','offline','SG02','301',5,'TC-010355',1,20);
 /*!40000 ALTER TABLE `class` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -69,4 +68,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:27
+-- Dump completed on 2022-12-31  0:13:13

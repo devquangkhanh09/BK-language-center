@@ -16,10 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping events for database 'language_center'
---
-
---
 -- Dumping routines for database 'language_center'
 --
 /*!50003 DROP FUNCTION IF EXISTS `calculate_meet_requirement` */;
@@ -136,12 +132,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `add_class`(
     `_branch_id` CHAR(4),
     `_room` CHAR(3),
     `_time` INT,
-    `_teacher_id` CHAR(9),
-    `_status` VARCHAR(30)
+    `_teacher_id` CHAR(9)
 )
 BEGIN
 
 	DECLARE `_end_date` DATE;
+    DECLARE `_teacher_requirement`, `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking` FLOAT;
+    DECLARE `_type` VARCHAR(10);
 	
 	IF EXISTS (SELECT * FROM `class` WHERE `course_id` = `_course_id` AND `class_id` = `_class_id`) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: course_id and class_id must be unique";
@@ -154,9 +151,7 @@ BEGIN
 	ELSEIF NOT (`_class_id` REGEXP '[0-9]{4}-[0-9]{2}') THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: class_id has invalid syntax";
 	ELSEIF NOT (`_start_date` >= '2022-09-01') THEN 
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be smaller than 2022-09-01";
-	ELSEIF NOT (`_start_date` < `_end_date`) THEN 
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be smaller than end_date";
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be greater than 2022-09-01";
 	ELSEIF NOT (`_form` IN ('online', 'offline')) THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: form must be online or offline";
 	ELSEIF NOT (`_time` >= 1 AND `_time` <= 6) THEN 
@@ -172,6 +167,26 @@ BEGIN
 		WHERE ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `branch_id` = `_branch_id` AND `room` = `_room` AND `time` = `_time`
     ) THEN 
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate use of room";
+	END IF;
+    
+    SELECT `type`, `teacher_requirement`
+    INTO `_type`, `_teacher_requirement`
+    FROM `course`
+    WHERE `course_id` = `_course_id`;
+    
+    SELECT `level_overall`, `level_listening`, `level_reading`, `level_writing`, `level_speaking`
+    INTO `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking`
+    FROM `teacher`
+    WHERE `id` = `_teacher_id`;
+    
+    IF (
+		(`_type` = "OVERALL" AND `_level_overall` < `_teacher_requirement`) OR
+        (`_type` = "LISTENING" AND `_level_listening` < `_teacher_requirement`) OR
+        (`_type` = "READING" AND `_level_reading` < `_teacher_requirement`) OR
+        (`_type` = "WRITING" AND `_level_writing` < `_teacher_requirement`) OR
+        (`_type` = "SPEAKING" AND `_level_speaking` < `_teacher_requirement`)
+	) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: level of teacher does not meet requirement";
 	END IF;
     
     IF EXISTS (
@@ -193,7 +208,8 @@ BEGIN
 		`_room`,
 		`_time`,
 		`_teacher_id`,
-		`_status`
+        0,
+        20
     );
     
 END ;;
@@ -374,6 +390,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_class`( _course_id CHAR(9), _class_id CHAR(9))
 BEGIN
+	DELETE FROM `attendance` WHERE course_id = _course_id and class_id = _class_id;
     DELETE FROM `student_class` WHERE course_id = _course_id and class_id = _class_id;
 	DELETE FROM `class` WHERE course_id = _course_id and class_id = _class_id;
 END ;;
@@ -505,10 +522,10 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `updateCourse`(_course_id CHAR(5), _name VARCHAR(50), _type VARCHAR(10), _requirement float, _target float, _cost float, _numOfLecture int)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateCourse`(_course_id CHAR(5), _name VARCHAR(50), _type VARCHAR(10), _requirement float, _target float, _cost float, _teacher_requirement float, _numOfLecture int)
 BEGIN
     UPDATE course
-    SET name = _name, type = _type, requirement = _requirement, target = _target, cost = _cost, numOfLecture = _numOfLecture
+    SET name = _name, type = _type, requirement = _requirement, target = _target, cost = _cost, teacher_requirement = _teacher_requirement, numOfLecture = _numOfLecture
     WHERE course_id = _course_id;
 END ;;
 DELIMITER ;
@@ -654,6 +671,95 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_class` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_class`(
+	`_course_id` CHAR(5),
+    `_class_id` CHAR(7),
+    `_start_date` DATE,
+    `_form` VARCHAR(10),
+    `_branch_id` CHAR(4),
+    `_room` CHAR(3),
+    `_time` INT,
+    `_teacher_id` CHAR(9)
+)
+BEGIN
+
+	DECLARE `_end_date` DATE;
+    DECLARE `_teacher_requirement`, `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking` FLOAT;
+    DECLARE `_type` VARCHAR(10);
+	
+	IF NOT EXISTS (SELECT * FROM `class` WHERE `course_id` = `_course_id` AND `class_id` = `_class_id`) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: course_id and class_id must exist";
+	ELSEIF (`_branch_id` IS NOT NULL) AND (`_room` IS NOT NULL) AND NOT EXISTS (SELECT * FROM `classroom` WHERE `branch_id` = `_branch_id` AND `room` = `_room`) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: branch_id, room must exists in classroom";
+	ELSEIF NOT EXISTS (SELECT * FROM `teacher` WHERE `id` = `_teacher_id`) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: teacher_id must exists in teacher";
+	ELSEIF NOT (`_start_date` >= '2022-09-01') THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: start_date must be greater than 2022-09-01";
+	ELSEIF NOT (`_form` IN ('online', 'offline')) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: form must be online or offline";
+	ELSEIF NOT (`_time` >= 1 AND `_time` <= 6) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: time must be between 1 and 6";
+	END IF;
+    
+    SET `_start_date` = get_new_start_date(`_start_date`, `_time`);
+    SET `_end_date` = adddate(`_start_date`, 7 * ((SELECT `numOfLecture` FROM `course` WHERE `course_id` = `_course_id`) - 1));
+    
+    IF EXISTS (
+		SELECT * 
+		FROM `class` 
+		WHERE (`course_id` <> `_course_id` OR `class_id` <> `_class_id`) AND ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `branch_id` = `_branch_id` AND `room` = `_room` AND `time` = `_time`
+    ) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate use of room";
+	END IF;
+    
+    SELECT `type`, `teacher_requirement`
+    INTO `_type`, `_teacher_requirement`
+    FROM `course`
+    WHERE `course_id` = `_course_id`;
+    
+    SELECT `level_overall`, `level_listening`, `level_reading`, `level_writing`, `level_speaking`
+    INTO `_level_overall`, `_level_listening`, `_level_reading`, `_level_writing`, `_level_speaking`
+    FROM `teacher`
+    WHERE `id` = `_teacher_id`;
+    
+    IF (
+		(`_type` = "OVERALL" AND `_level_overall` < `_teacher_requirement`) OR
+        (`_type` = "LISTENING" AND `_level_listening` < `_teacher_requirement`) OR
+        (`_type` = "READING" AND `_level_reading` < `_teacher_requirement`) OR
+        (`_type` = "WRITING" AND `_level_writing` < `_teacher_requirement`) OR
+        (`_type` = "SPEAKING" AND `_level_speaking` < `_teacher_requirement`)
+	) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: level of teacher does not meet requirement";
+	END IF;
+    
+    IF EXISTS (
+		SELECT *
+        FROM `class`
+        WHERE (`course_id` <> `_course_id` OR `class_id` <> `_class_id`) AND ((`start_date` <= `_start_date` AND `end_date` >= `_start_date`) OR (`start_date` <= `_end_date` AND `end_date` >= `_end_date`)) AND `teacher_id` = `_teacher_id` AND `time` = `_time`
+    ) THEN 
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Invalid: duplicate schedule of teacher";
+	END IF;
+    
+    UPDATE `class`
+    SET `start_date` = `_start_date`, `end_date` = `_end_date`, `form` = `_form`, `branch_id` = `_branch_id`, `room` = `_room`, `time` = `_time`, `teacher_id` = `_teacher_id`
+    WHERE `course_id` = `_course_id` AND `class_id` = `_class_id`;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_status` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -697,4 +803,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-16 22:30:28
+-- Dump completed on 2022-12-31  0:13:14
