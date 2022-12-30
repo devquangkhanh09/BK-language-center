@@ -30,7 +30,6 @@ const TABLE_HEAD = [
   { id: "level_reading", label: "READING", align: "center" },
   { id: "level_writing", label: "WRITING", align: "center" },
   { id: "level_speaking", label: "SPEAKING", align: "center" },
-  { id: "type", label: "Loại GV", align: "center" },
 ];
 
 //--------------------------------------------------
@@ -121,7 +120,6 @@ export default function TeacherAdminPage() {
                         level_reading,
                         level_writing,
                         level_speaking,
-                        type,
                       } = teacher;
 
                       return (
@@ -145,8 +143,6 @@ export default function TeacherAdminPage() {
                           <TableCell align="center">{level_writing}</TableCell>
 
                           <TableCell align="center">{level_speaking}</TableCell>
-
-                          <TableCell align="center">{type}</TableCell>
                         </TableRow>
                       );
                     })}

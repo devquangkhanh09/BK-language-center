@@ -62,18 +62,7 @@ router.get("/classes/:id", async (req, res) => {
         var element = classOfCourse[idx];
         var schedule = element.time;
         var sched = ""; 
-        if (schedule === 1){
-            sched = "Thứ 2, 4, 6: 17h30 - 19:00";
-        }
-        else if (schedule === 2){
-            sched = "Thứ 2, 4, 6: 19h30 - 21:00";
-        }
-        else if (schedule === 3){
-            sched = "Thứ 3, 5, 7: 17h30 - 19:00";
-        }
-        else if (schedule === 4){
-            sched = "Thứ 3, 5, 7: 19h30 - 21:00";
-        }
+        sched = `Thứ ${schedule + 1}: 19h - 21h`;
 
         var std_status;
         var checkStdClass = await query.checkStudentInClass(req.user.id, element.class_id, id);

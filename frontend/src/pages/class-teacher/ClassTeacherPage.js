@@ -154,9 +154,11 @@ export default function ClassTeacherPage() {
                       </Typography>
                     }
                     subheader={
-                      start_date > (new Date()).toISOString().split('T')[0] 
+                      start_date > (new Date()).toISOString().split('T')[0]
                       ? <Chip label={ "Chưa diễn ra" } color="info" />
-                      : <Chip label={ "Đang diễn ra" } color="success" />
+                      : end_date >= (new Date()).toISOString().split('T')[0]
+                      ? <Chip label={ "Đang diễn ra" } color="success" />
+                      : <Chip label={ "Đã hoàn thành" } color="default" />
                     }
                   />
 
@@ -193,6 +195,7 @@ export default function ClassTeacherPage() {
                         borderRadius: 30,
                         margin: "0 auto 15px",
                       }}
+                      disabled={end_date >= (new Date()).toISOString().split('T')[0]}
                       startIcon={<Iconify icon="eva:plus-fill" />}
                       onClick={() => handleEnterGrade(class_id)}
                     >

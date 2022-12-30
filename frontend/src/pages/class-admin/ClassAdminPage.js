@@ -345,7 +345,7 @@ export default function ClassAdminPage() {
 
                           <TableCell align="left">{teacher_id}</TableCell>
 
-                          <TableCell align="left">{(start_date > (new Date()).toISOString().split('T')[0])? "Chưa diễn ra":"Đang diễn ra"}</TableCell>
+                          <TableCell align="left">{(start_date > (new Date()).toISOString().split('T')[0])? "Chưa diễn ra": (end_date >= (new Date()).toISOString().split('T')[0])? "Đang diễn ra":"Đã hoàn thành"}</TableCell>
 
                           <TableCell align="center">{numOfStudent}</TableCell>
                           <TableCell align="right">
